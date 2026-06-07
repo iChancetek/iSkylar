@@ -2,6 +2,7 @@
 import { OpenAI } from 'openai';
 import * as dotenv from 'dotenv';
 import path from 'path';
+import { Readable } from 'stream';
 
 // Try loading from .env.local first, then .env
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
@@ -26,14 +27,15 @@ async function verifyOpenAI() {
     console.log(`🔑 Key prefix: ${apiKey.substring(0, 7)}...`);
 
     const openai = new OpenAI({ apiKey });
+    let audioBuffer: Buffer | null = null;
 
-    // Test 1: Chat Completion (GPT-4)
+    // Test 1: Chat Completion (GPT-5.4-Mini)
     try {
-        console.log("\n📡 Testing Chat Completion (gpt-4-turbo-preview)...");
+        console.log("\n📡 Testing Chat Completion (gpt-5.4-mini)...");
         const completion = await openai.chat.completions.create({
-            model: "gpt-4-turbo-preview",
+            model: "gpt-5.4-mini",
             messages: [{ role: "user", content: "Reply with the word 'Success'." }],
-            max_tokens: 10,
+            max_completion_tokens: 10,
         });
         console.log("✅ Chat Response:", completion.choices[0].message.content);
     } catch (error: any) {
@@ -54,11 +56,40 @@ async function verifyOpenAI() {
             voice: "nova",
             input: "System check complete.",
         });
-        const buffer = await mp3.arrayBuffer();
-        console.log(`✅ TTS Success: Received audio buffer (${buffer.byteLength} bytes)`);
+        audioBuffer = Buffer.from(await mp3.arrayBuffer());
+        console.log(`✅ TTS Success: Received audio buffer (${audioBuffer.byteLength} bytes)`);
     } catch (error: any) {
         console.error("❌ TTS Failed:");
         console.error(`   Message: ${error.message}`);
+    }
+
+    // Test 3: STT (whisper-1) - Loopback Test
+    if (audioBuffer) {
+        try {
+            console.log("\n🎙️ Testing Speech-to-Text (whisper-1)...");
+            
+            // Create a pseudo-file for the OpenAI SDK
+            // The SDK accepts a File object or a Readable stream with a 'path' property
+            const stream: any = Readable.from(audioBuffer);
+            stream.path = 'test.mp3';
+
+            const transcription = await openai.audio.transcriptions.create({
+                file: stream,
+                model: "whisper-1",
+            });
+            console.log("✅ STT Response:", transcription.text);
+            
+            if (transcription.text.toLowerCase().includes("system check complete")) {
+                console.log("✨ Loopback Test: PASSED (Transcription matches original text)");
+            } else {
+                console.log("⚠️ Loopback Test: PARTIAL (Transcription received but text mismatch)");
+            }
+        } catch (error: any) {
+            console.error("❌ STT Failed:");
+            console.error(`   Message: ${error.message}`);
+        }
+    } else {
+        console.log("\n⏭️ Skipping STT Test: No audio buffer available from TTS test.");
     }
 
     console.log("\n----------------------------------------");

@@ -26,7 +26,7 @@ export async function safetyNetActivation(input: { userInput: string }): Promise
   // Use OpenAI to generate a warm, supportive crisis response
   const openai = await getOpenAIClient();
   const completion = await openai.chat.completions.create({
-    model: "gpt-5.2",
+    model: "gpt-5.4-mini",
     messages: [
       {
         role: "system",
