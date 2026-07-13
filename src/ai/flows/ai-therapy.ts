@@ -6,6 +6,7 @@
 import { openai } from '@/lib/openai';
 import type { iSkylarInput, iSkylarOutput } from '@/ai/schema/ai-therapy';
 import { getAgent } from '@/ai/agents/index';
+import { CORE_PHILOSOPHY_PROMPT } from '@/ai/agents/core-philosophy';
 import { retrieveContext } from '@/ai/memory/rag-pipeline';
 import { appendMessage } from '@/lib/memory/conversation-store';
 
@@ -31,6 +32,8 @@ export async function askiSkylar(input: iSkylarInput): Promise<iSkylarOutput> {
   // Build the system prompt using the agent's specific instructions
   const systemPrompt = `${agent.systemPrompt}
   
+${CORE_PHILOSOPHY_PROMPT}
+
 ## Conversation Language
 The conversation language is: ${language}. All your responses MUST be in this language.
 ${memoryContext}`;
