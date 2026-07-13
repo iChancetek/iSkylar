@@ -5,14 +5,19 @@
 
 import { openai } from '@/lib/openai';
 
-export async function textToSpeech(text: string, language: string = 'en'): Promise<{ audioDataUri: string }> {
+export async function textToSpeech(
+  text: string, 
+  language: string = 'en', 
+  voiceId: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer' = 'nova',
+  speed: number = 0.95
+): Promise<{ audioDataUri: string }> {
   try {
     // Use OpenAI TTS API
     const mp3 = await openai.audio.speech.create({
       model: "tts-1", // or "tts-1-hd" for higher quality
-      voice: "nova", // warm, empathetic female voice
+      voice: voiceId, 
       input: text,
-      speed: 0.95, // Slightly slower for therapeutic calmness
+      speed: speed, 
     });
 
     // Convert to buffer

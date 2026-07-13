@@ -69,6 +69,7 @@ export default function VoiceInterface() {
   const [sessionStarted, setSessionStarted, isSessionStartedHydrated, clearSessionStarted] = usePersistedState('iskylar_session_started', false);
   const [chatHistory, setChatHistory, isChatHistoryHydrated, clearChatHistory] = usePersistedState<ChatMessage[]>('iskylar_chat_history', []);
   const [sessionState, setSessionState, isSessionStateHydrated, clearSessionState] = usePersistedState<string | undefined>('iskylar_session_state', undefined);
+  const [conversationId, setConversationId, isConversationIdHydrated, clearConversationId] = usePersistedState<string | undefined>('iskylar_conversation_id', undefined);
 
   // Ephemeral State
   const [isListening, setIsListening] = useState(false);
@@ -82,9 +83,10 @@ export default function VoiceInterface() {
   const [isFirstSession, setIsFirstSession] = useState(true);
   const sessionStartTimeRef = useRef<number>(0);
 
-  const isHydrated = isSessionStartedHydrated && isChatHistoryHydrated && isSessionStateHydrated;
+  const isHydrated = isSessionStartedHydrated && isChatHistoryHydrated && isSessionStateHydrated && isConversationIdHydrated;
 
   const { user, userProfile } = useAuthContext();
+  const activeAgentId = 'skylar'; // Default agent, no UI changes made
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
@@ -127,10 +129,11 @@ export default function VoiceInterface() {
     // We keep history visible for review, but "end" the active session flag.
     // clearChatHistory(); // Optional: decided to keep history visible until new session
     clearSessionState();
+    clearConversationId();
 
     setShowChat(false);
     sessionStartTimeRef.current = 0;
-  }, [sessionState, user, clearSessionStarted, clearSessionState, setChatHistory]);
+  }, [sessionState, user, clearSessionStarted, clearSessionState, clearConversationId, setChatHistory]);
 
   const playAudio = useCallback(async (audioDataUri: string, sessionShouldEnd: boolean = false) => {
     if (!audioDataUri) {
@@ -182,7 +185,14 @@ export default function VoiceInterface() {
 
   const handleTextOnlyResponse = useCallback(async (userInput: string) => {
     try {
-      const textResponse = await getTextResponse({ userInput, sessionState, language });
+      const textResponse = await getTextResponse({ 
+        userInput, 
+        sessionState, 
+        language,
+        userId: user?.uid,
+        agentId: activeAgentId,
+        conversationId
+      });
       setSessionState(textResponse.updatedSessionState);
 
       const message: ChatMessage = {
@@ -221,7 +231,10 @@ export default function VoiceInterface() {
         sessionState,
         language,
         wasInterrupted: interrupted,
-        interruptedDuring: interrupted ? currentResponse : undefined
+        interruptedDuring: interrupted ? currentResponse : undefined,
+        userId: user?.uid,
+        agentId: activeAgentId,
+        conversationId
       });
       setSessionState(response.updatedSessionState);
 
@@ -317,15 +330,25 @@ export default function VoiceInterface() {
     initializeAudioContext();
 
     setIsInitializing(true);
-    setIsInitializing(true);
     clearChatHistory(); // Clear previous history on NEW session
     setShowChat(true);
     setSessionStarted(true);
     sessionStartTimeRef.current = Date.now(); // Track session start time
+    
+    // Generate a new conversation ID for this session
+    const newConversationId = `conv-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    setConversationId(newConversationId);
 
     const startSessionWithRetry = async (attempts = 1): Promise<any> => {
       try {
-        return await getSpokenResponse({ userInput: "ISKYLAR_SESSION_START", sessionState: undefined, language });
+        return await getSpokenResponse({ 
+          userInput: "ISKYLAR_SESSION_START", 
+          sessionState: undefined, 
+          language,
+          userId: user?.uid,
+          agentId: activeAgentId,
+          conversationId: newConversationId
+        });
       } catch (error) {
         if (attempts > 0) {
           console.warn("Session start failed, retrying in 1.5s (Cold Start Protection)...");
