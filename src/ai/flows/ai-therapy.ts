@@ -5,12 +5,10 @@
 
 import { getOpenAIClient } from '@/lib/openai';
 import type { iSkylarInput, iSkylarOutput } from '@/ai/schema/ai-therapy';
-import type { AgentId } from '@/ai/agent-config';
-import { SYSTEM_PROMPTS } from '@/ai/agent-prompts';
-import { AGENTS } from '@/ai/agent-config';
-import { TAVILY_TOOL_DEFINITION, performTavilySearch } from '@/ai/tools/tavily';
-
-import { getAllUserMemories } from '@/lib/session-memory';
+import { getAgent } from '@/ai/agents/index';
+import { CORE_PHILOSOPHY_PROMPT } from '@/ai/agents/core-philosophy';
+import { retrieveContext } from '@/ai/memory/rag-pipeline';
+import { appendMessage } from '@/lib/memory/conversation-store';
 
 export async function askiSkylar(input: iSkylarInput): Promise<iSkylarOutput> {
   const userInput = input.userInput || '';
@@ -20,127 +18,71 @@ export async function askiSkylar(input: iSkylarInput): Promise<iSkylarOutput> {
   const interruptedDuring = input.interruptedDuring || '';
   const agentId = input.agentId || 'skylar';
   const userId = input.userId;
+  const conversationId = input.conversationId;
 
-  // 1. Get the correct system prompt for the selected agent
-  let systemPrompt = SYSTEM_PROMPTS[agentId as AgentId] || SYSTEM_PROMPTS.skylar;
+  // Retrieve the specific agent's configuration
+  const agent = getAgent(agentId);
 
-  // Append language instruction
-  systemPrompt += `\n\n## Conversation Language
-The conversation language is: ${language}. All your responses MUST be in this language.`;
-
-  // Append Long-Term Memory Context
+  // Retrieve relevant long-term memory context via RAG pipeline
+  let memoryContext = '';
   if (userId) {
-    try {
-      const pastMemories = await getAllUserMemories(userId);
-      if (pastMemories.length > 0) {
-        const memoryContext = pastMemories.slice(0, 30).map(m => {
-          const date = m.timestamp && m.timestamp.toDate ? m.timestamp.toDate().toLocaleDateString() : 'Unknown Date';
-          const insights = m.keyInsights.length > 0 ? m.keyInsights.join(' ') : 'No key insights recorded.';
-          return `- [${date}]: ${insights}`;
-        }).join('\n');
-
-        systemPrompt += `\n\n## LONG-TERM MEMORY (Past Sessions)
-You have access to the user's past session insights. Use this to recall details, names, and themes. NEVER mention "according to my database" or "long term memory". Just "Know" it naturally.
-${memoryContext}`;
-      }
-    } catch (e) {
-      console.error("Failed to load long-term memory:", e);
-    }
+    memoryContext = await retrieveContext(userId, agentId, userInput);
   }
 
-  // 2. Build User context
+  // Build the system prompt using the agent's specific instructions
+  const systemPrompt = `${agent.systemPrompt}
+  
+${CORE_PHILOSOPHY_PROMPT}
+
+## Conversation Language
+The conversation language is: ${language}. All your responses MUST be in this language.
+${memoryContext}`;
+
+  // User message with interruption context if applicable
   let userMessage = userInput;
 
   if (input.userInput === "ISKYLAR_SESSION_START") {
-    // AGENT INTRODUCTION RULE (MANDATORY)
-    userMessage = `[SYSTEM]: The user has just started a session/switched to you. 
-    State who you are naturally (e.g., "Hey, I'm ${AGENTS[agentId as AgentId].name}...").
-    Set the tone immediately based on your persona.
-    Keep it brief (10-20 words).`;
+    userMessage = "This is the start of the session. Give a warm, brief greeting (10-20 words) in the specified language.";
   } else if (wasInterrupted && interruptedDuring) {
-    userMessage = `[INTERRUPTION]: The user interrupted you. You were saying: "${interruptedDuring}"
-  Recover seamlessly ("As I was saying..." or "Anyway...").
-  User's new input: ${userInput}`;
+    userMessage = `[INTERRUPTION CONTEXT]: The user just interrupted you mid-response. You were saying: "${interruptedDuring}"
+Acknowledge naturally: "Okay—" or "Yeah, go ahead" then respond to their new input.
+
+User's new input: ${userInput}`;
   }
 
-  // 3. Execution via LangGraph
-  try {
-    const { appGraph } = await import('@/ai/langgraph/graph');
-    const { SystemMessage, HumanMessage } = await import('@langchain/core/messages');
+  // Call OpenAI API
+  const openai = await getOpenAIClient();
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4-turbo-preview",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: `Session State: ${sessionState}\n\nUser Input: ${userMessage}` }
+    ],
+    temperature: 0.8,
+    max_tokens: 150, // Keep responses brief
+  });
 
-    const inputs = {
-      messages: [
-        new SystemMessage(systemPrompt),
-        new HumanMessage(`Session State: ${sessionState}\n\nUser Input: ${userMessage}`)
-      ],
-      sender: "user"
-    };
+  const iSkylarResponse = completion.choices[0]?.message?.content || "I'm here with you.";
 
-    const config = {
-      configurable: {
-        thread_id: userId || "anonymous",
-      }
-    };
-
-    const result = await appGraph.invoke(inputs, config);
-    const lastMessage = result.messages[result.messages.length - 1];
-
-    // Explicitly handle string vs complex content
-    let finalResponse = "";
-    if (typeof lastMessage.content === 'string') {
-      finalResponse = lastMessage.content;
-    } else if (Array.isArray(lastMessage.content)) {
-      // Handle complex content (e.g. text + image_url blocks) if needed, usually just text for this app
-      finalResponse = lastMessage.content.map((c: any) => c.text || '').join('');
+  // Async save to conversation store if conversationId is provided
+  if (conversationId && userId) {
+    if (userInput !== "ISKYLAR_SESSION_START") {
+      appendMessage(conversationId, 'user', userInput, agentId, userId).catch(console.error);
     }
-
-    // --- HANDOFF DETECTION ---
-    // Check if the agent decided to call the handoff tool
-    let targetAgentId = undefined;
-
-    // We need to check previous messages for ToolCalls if the last message is just a confirmation
-    // OR check if the last message ITSELF is a tool call (if using a different graph structure).
-    // In standard LangGraph, the Agent (Assistant) emits a ToolCall, then the ToolNode runs, then Agent confirms.
-    // So we look for the most recent ToolMessage or check the Agent's ToolCall.
-
-    // Simplest check: Did the conversation execute "handoff_to_agent"?
-    const handoffToolCall = result.messages.find((m: any) =>
-      m.calls && m.calls[0]?.name === "handoff_to_agent"
-    ) || result.messages.find((m: any) =>
-      m.tool_calls && m.tool_calls.some((tc: any) => tc.name === "handoff_to_agent")
-    );
-
-    if (handoffToolCall) {
-      // Extract the target agent
-      // LangChain ToolCall structure: { name: string, args: any, id: string }
-      const toolCall = (handoffToolCall as any).tool_calls?.find((tc: any) => tc.name === "handoff_to_agent");
-      if (toolCall && toolCall.args && toolCall.args.targetAgentId) {
-        targetAgentId = toolCall.args.targetAgentId;
-        // Overwrite response to be brief if it's a handoff
-        if (!finalResponse) finalResponse = `Transferring you to ${targetAgentId}...`;
-      }
-    }
-
-    // Determine if session should end
-    const sessionShouldEnd = userInput.toLowerCase().includes('goodbye') ||
-      userInput.toLowerCase().includes('end session') ||
-      userInput.toLowerCase().includes("i'm done");
-
-    const updatedSessionState = sessionState;
-
-    return {
-      iSkylarResponse: finalResponse || "I'm listening.",
-      updatedSessionState,
-      sessionShouldEnd,
-      targetAgentId, // Return the target agent ID
-    };
-
-  } catch (error) {
-    console.error("LangGraph Execution Error:", error);
-    return {
-      iSkylarResponse: "I'm having a bit of trouble thinking right now. Can you say that again?",
-      updatedSessionState: sessionState,
-      sessionShouldEnd: false,
-    };
+    appendMessage(conversationId, 'agent', iSkylarResponse, agentId, userId).catch(console.error);
   }
+
+  // Determine if session should end
+  const sessionShouldEnd = userInput.toLowerCase().includes('goodbye') ||
+    userInput.toLowerCase().includes('end session') ||
+    userInput.toLowerCase().includes("i'm done");
+
+  // Update session state (simplified - in production you might extract themes/patterns)
+  const updatedSessionState = sessionState;
+
+  return {
+    iSkylarResponse,
+    updatedSessionState,
+    sessionShouldEnd,
+  };
 }

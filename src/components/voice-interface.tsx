@@ -87,6 +87,7 @@ export default function VoiceInterface() {
   const [sessionStarted, setSessionStarted, isSessionStartedHydrated, clearSessionStarted] = usePersistedState('iskylar_session_started', false);
   const [chatHistory, setChatHistory, isChatHistoryHydrated, clearChatHistory] = usePersistedState<ChatMessage[]>('iskylar_chat_history', []);
   const [sessionState, setSessionState, isSessionStateHydrated, clearSessionState] = usePersistedState<string | undefined>('iskylar_session_state', undefined);
+  const [conversationId, setConversationId, isConversationIdHydrated, clearConversationId] = usePersistedState<string | undefined>('iskylar_conversation_id', undefined);
 
   // Preferences
   const { preferences, incrementUsage, isDailyLimitReached, remainingMinutes } = useUserPreferences();
@@ -105,7 +106,7 @@ export default function VoiceInterface() {
   const [isFirstSession, setIsFirstSession] = useState(true);
   const sessionStartTimeRef = useRef<number>(0);
 
-  const isHydrated = isSessionStartedHydrated && isChatHistoryHydrated && isSessionStateHydrated;
+  const isHydrated = isSessionStartedHydrated && isChatHistoryHydrated && isSessionStateHydrated && isConversationIdHydrated;
 
   const [isTextMode, setIsTextMode] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -183,10 +184,11 @@ export default function VoiceInterface() {
     clearSessionStarted();
     setChatHistory(prev => [...prev, { id: 'system-end', speaker: 'system', text: 'Session ended.', icon: Brain }]);
     clearSessionState();
+    clearConversationId();
 
     setShowChat(false);
     sessionStartTimeRef.current = 0;
-  }, [sessionState, user, clearSessionStarted, clearSessionState, setChatHistory, incrementUsage, chatHistory]);
+  }, [sessionState, user, clearSessionStarted, clearSessionState, clearConversationId, setChatHistory, incrementUsage, chatHistory]);
 
   const playAudio = useCallback(async (audioDataUri: string, sessionShouldEnd: boolean = false) => {
     // Check preference
@@ -244,15 +246,14 @@ export default function VoiceInterface() {
 
   const handleTextOnlyResponse = useCallback(async (userInput: string) => {
     try {
-      // Pass the current agent to the text response flow
       const textResponse = await getTextResponse({
         userInput,
         sessionState,
         language,
         agentId: currentAgent,
-        userId: user?.uid
+        userId: user?.uid,
+        conversationId
       });
-
       setSessionState(textResponse.updatedSessionState);
 
       const message: Omit<ChatMessage, 'icon'> = {
@@ -296,7 +297,8 @@ export default function VoiceInterface() {
         wasInterrupted: interrupted,
         interruptedDuring: interrupted ? currentResponse : undefined,
         agentId: currentAgent,
-        userId: user?.uid
+        userId: user?.uid,
+        conversationId
       });
 
       if (response.error) {
@@ -409,6 +411,10 @@ export default function VoiceInterface() {
     if (preferences.transcriptionEnabled) setShowChat(true);
     setSessionStarted(true);
     sessionStartTimeRef.current = Date.now();
+    
+    // Generate a new conversation ID for this session
+    const newConversationId = `conv-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    setConversationId(newConversationId);
 
     const startSessionWithRetry = async (attempts = 1): Promise<any> => {
       try {
@@ -417,7 +423,8 @@ export default function VoiceInterface() {
           sessionState: undefined,
           language,
           agentId: currentAgent,
-          userId: user?.uid
+          userId: user?.uid,
+          conversationId: newConversationId
         });
       } catch (error) {
         if (attempts > 0) {
