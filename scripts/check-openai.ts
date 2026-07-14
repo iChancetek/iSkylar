@@ -29,11 +29,11 @@ async function verifyOpenAI() {
     const openai = new OpenAI({ apiKey });
     let audioBuffer: Buffer | null = null;
 
-    // Test 1: Chat Completion (GPT-5.6-Terra)
+    // Test 1: Chat Completion (GPT-5.4-Mini)
     try {
-        console.log("\n📡 Testing Chat Completion (gpt-5.6-terra)...");
+        console.log("\n📡 Testing Chat Completion (gpt-5.4-mini)...");
         const completion = await openai.chat.completions.create({
-            model: "gpt-5.6-terra",
+            model: "gpt-5.4-mini",
             messages: [{ role: "user", content: "Reply with the word 'Success'." }],
             max_completion_tokens: 10,
         });
