@@ -19,7 +19,7 @@ export const AGENTS: Record<AgentId, AgentMetadata> = {
         name: 'Skylar',
         role: 'Therapist',
         description: 'Warm, empathetic, professional therapist.',
-        voiceId: 'alloy'
+        voiceId: 'nova'
     },
     chancellor: {
         id: 'chancellor',
