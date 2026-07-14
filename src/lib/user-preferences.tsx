@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useCallback } from "react";
 import { usePersistedState } from "@/hooks/use-persisted-state";
+import { AgentId } from "@/ai/agent-config";
 
 export type LanguageCode = 'en' | 'es' | 'zh' | 'fr' | 'ar';
 
@@ -20,6 +21,7 @@ export interface UserPreferences {
     // Account
     userName: string;
     profileImage?: string; // New: allow storing avatar URL in prefs for faster local read
+    defaultAgent: AgentId;
 
     // Appearance
     theme: ThemeOption;
@@ -45,6 +47,7 @@ export interface UserPreferences {
 
 const DEFAULT_PREFERENCES: UserPreferences = {
     userName: '',
+    defaultAgent: 'skylar',
     theme: 'system',
     defaultDuration: 10,
     dailyUsageMinutes: 0,

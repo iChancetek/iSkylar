@@ -94,7 +94,7 @@ export default function VoiceInterface() {
   const { user, userProfile } = useAuthContext();
 
   // Ephemeral State
-  const [currentAgent, setCurrentAgent] = useState<AgentId>('skylar');
+  const [currentAgent, setCurrentAgent] = useState<AgentId>(preferences.defaultAgent || 'skylar');
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -108,6 +108,11 @@ export default function VoiceInterface() {
 
   const isHydrated = isSessionStartedHydrated && isChatHistoryHydrated && isSessionStateHydrated && isConversationIdHydrated;
 
+  useEffect(() => {
+    if (isHydrated && !sessionStarted && preferences.defaultAgent) {
+      setCurrentAgent(preferences.defaultAgent);
+    }
+  }, [isHydrated, sessionStarted, preferences.defaultAgent]);
   const [isTextMode, setIsTextMode] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -586,7 +591,7 @@ export default function VoiceInterface() {
             setIsInitializing(true);
             try {
               const response = await getSpokenResponse({
-                userInput: "ISKYLAR_SESSION_START",
+                userInput: "ISKYLAR_AGENT_SWITCH",
                 sessionState: undefined,
                 language,
                 agentId: id,

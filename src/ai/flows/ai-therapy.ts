@@ -43,6 +43,8 @@ ${memoryContext}`;
 
   if (input.userInput === "ISKYLAR_SESSION_START") {
     userMessage = "This is the start of the session. Give a warm, brief greeting (10-20 words) in the specified language.";
+  } else if (input.userInput === "ISKYLAR_AGENT_SWITCH") {
+    userMessage = "The user just switched to you. Greet the user and briefly introduce yourself and your role (20-30 words).";
   } else if (wasInterrupted && interruptedDuring) {
     userMessage = `[INTERRUPTION CONTEXT]: The user just interrupted you mid-response. You were saying: "${interruptedDuring}"
 Acknowledge naturally: "Okay—" or "Yeah, go ahead" then respond to their new input.
@@ -79,7 +81,7 @@ User's new input: ${userInput}`;
 
   // Async save to conversation store if conversationId is provided
   if (conversationId && userId) {
-    if (userInput !== "ISKYLAR_SESSION_START") {
+    if (userInput !== "ISKYLAR_SESSION_START" && userInput !== "ISKYLAR_AGENT_SWITCH") {
       appendMessage(conversationId, 'user', userInput, agentId, userId).catch(console.error);
     }
     appendMessage(conversationId, 'agent', iSkylarResponse, agentId, userId).catch(console.error);

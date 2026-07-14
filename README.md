@@ -7,6 +7,7 @@ It provides real-time voice-based therapeutic conversations, aiming to interpret
 
 ## Core Features
 - **AI-Powered Voice Companions:** Real-time, empathetic interaction powered by OpenAI `gpt-5.6-terra` (with `gpt-5.4-mini` fallback).
+- **Personalized Companionship:** Set a Default Therapist in your profile settings and receive tailored contextual greetings when switching between specialized agent personas mid-session.
 - **Voice Interaction:** High-accuracy Speech-to-Text (OpenAI Whisper) and natural Text-to-Speech integration.
 - **Dynamic Conversational Flow:** Adapts to user input, emotional state, and conversation history.
 - **Therapeutic Interventions:** Utilizes techniques from CBT, DBT, ACT, and Mindfulness.
