@@ -24,7 +24,7 @@ const getModel = async () => {
     const tools = await getAggregatedTools(); // Dynamic Fetch (MCP + Static)
 
     const model = new ChatOpenAI({
-        modelName: "gpt-5.4-mini", // Updated to gpt-5.4-mini per user request
+        modelName: "gpt-5.6-terra",
         temperature: 0.9,
         apiKey: apiKey,
         streaming: true,

@@ -52,12 +52,12 @@ async function verify() {
 
     const openai = new OpenAI({ apiKey });
 
-    console.log("Attempting completion with model: gpt-5.4-mini");
+    console.log("Attempting completion with model: gpt-5.6-terra");
 
     try {
         const completion = await openai.chat.completions.create({
-            model: "gpt-5.4-mini",
-            messages: [{ role: "user", content: "Hello, are you GPT-5.4-mini?" }],
+            model: "gpt-5.6-terra",
+            messages: [{ role: "user", content: "Hello, are you GPT-5.6-terra?" }],
             max_completion_tokens: 50
         });
 

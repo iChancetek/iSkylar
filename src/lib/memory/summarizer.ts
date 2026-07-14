@@ -14,7 +14,7 @@ export async function extractAndSaveMemories(conversation: Conversation): Promis
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
+      model: "gpt-5.6-terra",
       messages: [
         {
           role: "system",

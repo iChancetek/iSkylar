@@ -6,7 +6,7 @@ This application is built with NextJS, React, ShadCN UI components, Tailwind CSS
 It provides real-time voice-based therapeutic conversations, aiming to interpret emotional cues and deliver evidence-based therapeutic interventions.
 
 ## Core Features
-- **AI-Powered Voice Companions:** Real-time, empathetic interaction powered by OpenAI `gpt-4-turbo-preview`.
+- **AI-Powered Voice Companions:** Real-time, empathetic interaction powered by OpenAI `gpt-5.6-terra`.
 - **Voice Interaction:** High-accuracy Speech-to-Text (OpenAI Whisper) and natural Text-to-Speech integration.
 - **Dynamic Conversational Flow:** Adapts to user input, emotional state, and conversation history.
 - **Therapeutic Interventions:** Utilizes techniques from CBT, DBT, ACT, and Mindfulness.
@@ -17,7 +17,7 @@ It provides real-time voice-based therapeutic conversations, aiming to interpret
 iSkylar leverages a modular AI architecture, using a combination of **Firebase**, **OpenAI**, and **Genkit** to manage dynamic conversational memory and agent personas.
 
 ### Frameworks & Protocols
-- **Core Model**: The system relies on OpenAI's `gpt-4-turbo-preview` via direct API calls for the primary conversational loop, optimizing for ultra-low latency and highly natural response flow.
+- **Core Model**: The system relies on OpenAI's `gpt-5.6-terra` via direct API calls, optimizing for ultra-low latency and highly natural response flow.
 - **RAG & Memory Pipeline**: A robust memory backend built on Firebase Firestore stores long-term conversational facts. Embeddings (`text-embedding-3-small`) power semantic search to retrieve relevant memories seamlessly across sessions.
 - **Secondary Flows**: Google's **Genkit** is used for structured background processes, such as emotional cue recognition and personalized therapy interventions.
 

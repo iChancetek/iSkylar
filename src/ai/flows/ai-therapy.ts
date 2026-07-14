@@ -53,7 +53,7 @@ User's new input: ${userInput}`;
   // Call OpenAI API
   const openai = await getOpenAIClient();
   const completion = await openai.chat.completions.create({
-    model: "gpt-4-turbo-preview",
+    model: "gpt-5.6-terra",
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: `Session State: ${sessionState}\n\nUser Input: ${userMessage}` }
