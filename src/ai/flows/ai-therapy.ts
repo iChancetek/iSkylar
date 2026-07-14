@@ -8,7 +8,7 @@ import type { iSkylarInput, iSkylarOutput } from '@/ai/schema/ai-therapy';
 import { getAgent } from '@/ai/agents/index';
 import { CORE_PHILOSOPHY_PROMPT } from '@/ai/agents/core-philosophy';
 import { retrieveContext } from '@/ai/memory/rag-pipeline';
-import { appendMessage } from '@/lib/memory/conversation-store';
+import { appendMessage, getConversation } from '@/lib/memory/conversation-store';
 
 export async function askiSkylar(input: iSkylarInput): Promise<iSkylarOutput> {
   const userInput = input.userInput || '';
@@ -52,10 +52,25 @@ Acknowledge naturally: "Okay—" or "Yeah, go ahead" then respond to their new i
 User's new input: ${userInput}`;
   }
 
+  // Fetch conversation history
+  let historyMessages: any[] = [];
+  if (conversationId) {
+    const conversation = await getConversation(conversationId);
+    if (conversation && conversation.messages) {
+      // Get the last 20 messages for context to maintain memory within the session
+      const recentMessages = conversation.messages.slice(-20);
+      historyMessages = recentMessages.map(msg => ({
+        role: msg.speaker === 'user' ? 'user' : 'assistant',
+        content: msg.text
+      }));
+    }
+  }
+
   // Call OpenAI API
   const openai = await getOpenAIClient();
   const messages = [
     { role: "system", content: systemPrompt },
+    ...historyMessages,
     { role: "user", content: `Session State: ${sessionState}\n\nUser Input: ${userMessage}` }
   ] as any;
 
