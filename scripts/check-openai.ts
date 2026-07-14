@@ -29,9 +29,28 @@ async function verifyOpenAI() {
     const openai = new OpenAI({ apiKey });
     let audioBuffer: Buffer | null = null;
 
-    // Test 1: Chat Completion (GPT-5.4-Mini)
+    // Test 1: Chat Completion (GPT-5.6-Terra)
     try {
-        console.log("\n📡 Testing Chat Completion (gpt-5.4-mini)...");
+        console.log("\n📡 Testing Chat Completion (gpt-5.6-terra)...");
+        const completion = await openai.chat.completions.create({
+            model: "gpt-5.6-terra",
+            messages: [{ role: "user", content: "Reply with the word 'Success'." }],
+            max_completion_tokens: 10,
+        });
+        console.log("✅ Chat Response:", completion.choices[0].message.content);
+    } catch (error: any) {
+        console.error("❌ Chat Completion Failed (gpt-5.6-terra):");
+        if (error.response) {
+            console.error(`   Status: ${error.response.status}`);
+            console.error(`   Data: ${JSON.stringify(error.response.data)}`);
+        } else {
+            console.error(`   Message: ${error.message}`);
+        }
+    }
+
+    // Test 1.5: Chat Completion Fallback (GPT-5.4-Mini)
+    try {
+        console.log("\n📡 Testing Chat Completion Fallback (gpt-5.4-mini)...");
         const completion = await openai.chat.completions.create({
             model: "gpt-5.4-mini",
             messages: [{ role: "user", content: "Reply with the word 'Success'." }],
@@ -39,7 +58,7 @@ async function verifyOpenAI() {
         });
         console.log("✅ Chat Response:", completion.choices[0].message.content);
     } catch (error: any) {
-        console.error("❌ Chat Completion Failed:");
+        console.error("❌ Chat Completion Failed (gpt-5.4-mini):");
         if (error.response) {
             console.error(`   Status: ${error.response.status}`);
             console.error(`   Data: ${JSON.stringify(error.response.data)}`);

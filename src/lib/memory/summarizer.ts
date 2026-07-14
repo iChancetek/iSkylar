@@ -13,13 +13,11 @@ export async function extractAndSaveMemories(conversation: Conversation): Promis
   if (!transcript.trim()) return;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-5.4-mini",
-      messages: [
-        {
-          role: "system",
-          content: `You are an AI memory extraction system. Analyze the following conversation transcript and extract any important, long-term facts about the user.
-          
+    const messages = [
+      {
+        role: "system",
+        content: `You are an AI memory extraction system. Analyze the following conversation transcript and extract any important, long-term facts about the user.
+        
 Ignore temporary chit-chat. Focus on:
 - Personal profile (name, background)
 - Preferences (likes, dislikes, communication style)
@@ -32,15 +30,30 @@ Output format: A JSON array of objects.
   { "category": "Hobbies", "content": "The user enjoys painting with watercolors." },
   { "category": "Goals", "content": "The user is trying to run a 5k next month." }
 ]`
-        },
-        {
-          role: "user",
-          content: `Transcript:\n\n${transcript}`
-        }
-      ],
-      response_format: { type: "json_object" }, // Requires GPT-4 Turbo or newer
-      temperature: 0.1,
-    });
+      },
+      {
+        role: "user",
+        content: `Transcript:\n\n${transcript}`
+      }
+    ] as any;
+
+    let response;
+    try {
+      response = await openai.chat.completions.create({
+        model: "gpt-5.6-terra",
+        messages,
+        response_format: { type: "json_object" }, // Requires GPT-4 Turbo or newer
+        temperature: 0.1,
+      });
+    } catch (error) {
+      console.warn("gpt-5.6-terra failed in summarizer, falling back to gpt-5.4-mini", error);
+      response = await openai.chat.completions.create({
+        model: "gpt-5.4-mini",
+        messages,
+        response_format: { type: "json_object" },
+        temperature: 0.1,
+      });
+    }
 
     const content = response.choices[0]?.message?.content || '{}';
     let data;

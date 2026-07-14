@@ -25,12 +25,10 @@ export async function safetyNetActivation(input: { userInput: string }): Promise
 
   // Use OpenAI to generate a warm, supportive crisis response
   const openai = await getOpenAIClient();
-  const completion = await openai.chat.completions.create({
-    model: "gpt-5.4-mini",
-    messages: [
-      {
-        role: "system",
-        content: `You are iSkylar, a compassionate AI companion acting as a crisis guide. 
+  const messages = [
+    {
+      role: "system",
+      content: `You are iSkylar, a compassionate AI companion acting as a crisis guide. 
 The user may be in distress. Your goal is to:
 1. Validate their pain warmly ("I hear how much pain you're in").
 2. Urgently but gently point them to professional help.
@@ -38,15 +36,30 @@ The user may be in distress. Your goal is to:
 4. Be brief (30-50 words).
 
 NEVER act as a doctor. NEVER encourage the behavior.`
-      },
-      {
-        role: "user",
-        content: `The user said: "${userInput}"\n\nProvide a supportive, safety-first response.`
-      }
-    ],
-    temperature: 0.6,
-    max_completion_tokens: 150,
-  });
+    },
+    {
+      role: "user",
+      content: `The user said: "${userInput}"\n\nProvide a supportive, safety-first response.`
+    }
+  ] as any;
+
+  let completion;
+  try {
+    completion = await openai.chat.completions.create({
+      model: "gpt-5.6-terra",
+      messages,
+      temperature: 0.6,
+      max_completion_tokens: 150,
+    });
+  } catch (error) {
+    console.warn("gpt-5.6-terra failed in safety-net, falling back to gpt-5.4-mini", error);
+    completion = await openai.chat.completions.create({
+      model: "gpt-5.4-mini",
+      messages,
+      temperature: 0.6,
+      max_completion_tokens: 150,
+    });
+  }
 
   const aiResponse = completion.choices[0]?.message?.content || '';
 

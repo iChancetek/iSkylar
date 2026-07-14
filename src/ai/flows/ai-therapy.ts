@@ -52,15 +52,28 @@ User's new input: ${userInput}`;
 
   // Call OpenAI API
   const openai = await getOpenAIClient();
-  const completion = await openai.chat.completions.create({
-    model: "gpt-5.4-mini",
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: `Session State: ${sessionState}\n\nUser Input: ${userMessage}` }
-    ],
-    temperature: 0.8,
-    max_tokens: 150, // Keep responses brief
-  });
+  const messages = [
+    { role: "system", content: systemPrompt },
+    { role: "user", content: `Session State: ${sessionState}\n\nUser Input: ${userMessage}` }
+  ] as any;
+
+  let completion;
+  try {
+    completion = await openai.chat.completions.create({
+      model: "gpt-5.6-terra",
+      messages,
+      temperature: 0.8,
+      max_tokens: 150,
+    });
+  } catch (error) {
+    console.warn("gpt-5.6-terra failed in ai-therapy, falling back to gpt-5.4-mini", error);
+    completion = await openai.chat.completions.create({
+      model: "gpt-5.4-mini",
+      messages,
+      temperature: 0.8,
+      max_tokens: 150,
+    });
+  }
 
   const iSkylarResponse = completion.choices[0]?.message?.content || "I'm here with you.";
 

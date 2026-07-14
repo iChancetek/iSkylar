@@ -23,13 +23,21 @@ const getModel = async () => {
     const apiKey = await getOpenAIKey();
     const tools = await getAggregatedTools(); // Dynamic Fetch (MCP + Static)
 
-    const model = new ChatOpenAI({
-        modelName: "gpt-5.4-mini", // Updated to gpt-5.4-mini per user request
+    const primaryModel = new ChatOpenAI({
+        modelName: "gpt-5.6-terra",
         temperature: 0.9,
         apiKey: apiKey,
         streaming: true,
-    });
-    return model.bindTools(tools);
+    }).bindTools(tools);
+
+    const fallbackModel = new ChatOpenAI({
+        modelName: "gpt-5.4-mini",
+        temperature: 0.9,
+        apiKey: apiKey,
+        streaming: true,
+    }).bindTools(tools);
+
+    return primaryModel.withFallbacks({ fallbacks: [fallbackModel] });
 };
 
 // --- Nodes ---
