@@ -63,7 +63,7 @@ User's new input: ${userInput}`;
       model: "gpt-5.6-terra",
       messages,
       temperature: 0.8,
-      max_tokens: 150,
+      max_completion_tokens: 150,
     });
   } catch (error) {
     console.warn("gpt-5.6-terra failed in ai-therapy, falling back to gpt-5.4-mini", error);
@@ -71,7 +71,7 @@ User's new input: ${userInput}`;
       model: "gpt-5.4-mini",
       messages,
       temperature: 0.8,
-      max_tokens: 150,
+      max_completion_tokens: 150,
     });
   }
 
