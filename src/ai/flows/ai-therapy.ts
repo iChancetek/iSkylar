@@ -8,7 +8,8 @@ import type { iSkylarInput, iSkylarOutput } from '@/ai/schema/ai-therapy';
 import { getAgent } from '@/ai/agents/index';
 import { CORE_PHILOSOPHY_PROMPT } from '@/ai/agents/core-philosophy';
 import { retrieveContext } from '@/ai/memory/rag-pipeline';
-import { appendMessage, getConversation } from '@/lib/memory/conversation-store';
+import { appendMessage, getConversation, endConversation } from '@/lib/memory/conversation-store';
+import { extractAndSaveMemories } from '@/lib/memory/summarizer';
 
 export async function askiSkylar(input: iSkylarInput): Promise<iSkylarOutput> {
   const userInput = input.userInput || '';
@@ -115,4 +116,18 @@ User's new input: ${userInput}`;
     updatedSessionState,
     sessionShouldEnd,
   };
+}
+
+export async function finalizeSession(conversationId: string): Promise<void> {
+  if (!conversationId) return;
+  
+  try {
+    const conversation = await endConversation(conversationId);
+    if (conversation) {
+      // Run the long-term memory extraction asynchronously without blocking the client
+      extractAndSaveMemories(conversation).catch(console.error);
+    }
+  } catch (error) {
+    console.error("Failed to finalize session:", error);
+  }
 }

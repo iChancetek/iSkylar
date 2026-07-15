@@ -18,18 +18,22 @@ export async function extractAndSaveMemories(conversation: Conversation): Promis
         role: "system",
         content: `You are an AI memory extraction system. Analyze the following conversation transcript and extract any important, long-term facts about the user.
         
-Ignore temporary chit-chat. Focus on:
-- Personal profile (name, background)
+Ignore temporary chit-chat. Focus on extracting:
+- Personal profile (CRITICAL: User's name, background, identity)
+- Session Summary (A brief summary of what was discussed in this specific session)
 - Preferences (likes, dislikes, communication style)
-- Health and wellness (ongoing issues, feelings)
+- Health and wellness (ongoing issues, emotional patterns, feelings discussed)
 - Goals, projects, and tasks
 - Family, friends, career, hobbies
 
-Output format: A JSON array of objects.
-[
-  { "category": "Hobbies", "content": "The user enjoys painting with watercolors." },
-  { "category": "Goals", "content": "The user is trying to run a 5k next month." }
-]`
+Output format: A JSON object with a single "memories" key containing an array of objects.
+{
+  "memories": [
+    { "category": "Personal Profile", "content": "The user's name is John." },
+    { "category": "General", "content": "Session Summary: John discussed his stress at work and his goal to run a 5k." },
+    { "category": "Goals", "content": "John is trying to run a 5k next month." }
+  ]
+}`
       },
       {
         role: "user",

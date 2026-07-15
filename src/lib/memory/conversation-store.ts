@@ -97,11 +97,11 @@ export async function getRecentConversations(userId: string, agentId?: string, l
   } as Conversation));
 }
 
-export async function endConversation(conversationId: string): Promise<void> {
+export async function endConversation(conversationId: string): Promise<Conversation | null> {
   const convRef = doc(db, CONVERSATIONS_COLLECTION, conversationId);
   
   const snapshot = await getDoc(convRef);
-  if (!snapshot.exists()) return;
+  if (!snapshot.exists()) return null;
   
   const data = snapshot.data() as Conversation;
   const duration = Math.floor((Date.now() - data.startTime.toMillis()) / 1000);
@@ -110,4 +110,6 @@ export async function endConversation(conversationId: string): Promise<void> {
     endTime: Timestamp.now(),
     duration
   });
+
+  return { id: snapshot.id, ...data } as Conversation;
 }

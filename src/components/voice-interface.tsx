@@ -9,6 +9,7 @@ import { SettingsDialog } from "@/components/settings/settings-dialog";
 import { Settings, Mic, User, Brain, AlertTriangle, Loader2, MessageSquare, X, RefreshCw, Keyboard, Square, Play, Pause, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { getSpokenResponse } from "@/ai/flows/get-spoken-response";
 import { getTextResponse } from "@/ai/flows/get-text-response";
+import { finalizeSession } from "@/ai/flows/ai-therapy";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -531,6 +532,12 @@ export default function VoiceInterface() {
     setIsListening(false);
 
     setSessionStarted(false);
+    
+    // Trigger memory extraction
+    if (conversationId) {
+      finalizeSession(conversationId).catch(console.error);
+    }
+    
     // Ensure we don't auto-start again immediately
     if (retryTimeoutRef.current) {
       clearTimeout(retryTimeoutRef.current);
