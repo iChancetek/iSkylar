@@ -1,111 +1,99 @@
 "use client";
 
-import { useAuthContext } from "@/lib/auth";
 import Link from "next/link";
-import { Shield, Lock, Cloud, Eye, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/footer";
+import { Shield, ArrowLeft, Lock, Database, Eye } from "lucide-react";
 
-export default function PrivacyPage() {
-    return (
-        <div className="min-h-screen bg-black text-white selection:bg-purple-500/30">
-            {/* Nav */}
-            <nav className="fixed top-0 w-full z-50 bg-black/50 backdrop-blur-xl border-b border-white/5">
-                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-                    <Link href="/" className="text-xl font-bold tracking-tighter hover:text-purple-300 transition-colors">
-                        iSkylar
-                    </Link>
-                    <Link href="/">
-                        <Button variant="ghost" className="text-white/60 hover:text-white">
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            Back to Home
-                        </Button>
-                    </Link>
-                </div>
-            </nav>
-
-            <main className="pt-32 pb-20 px-6 max-w-4xl mx-auto">
-                <header className="mb-16 text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-purple-500/10 mb-6 ring-1 ring-purple-500/20">
-                        <Shield className="w-8 h-8 text-purple-400" />
-                    </div>
-                    <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-br from-white via-white/90 to-white/50 bg-clip-text text-transparent">
-                        Privacy & Security
-                    </h1>
-                    <p className="text-xl text-white/60 max-w-2xl mx-auto leading-relaxed">
-                        Your trust is our foundation. iSkylar is built on enterprise-grade infrastructure to ensure your therapeutic journey remains private.
-                    </p>
-                </header>
-
-                <div className="grid gap-8 md:grid-cols-2 mb-16">
-                    <SecurityCard
-                        icon={Cloud}
-                        title="Google Cloud Secured"
-                        description="iSkylar is built on top of Google's secure Cloud Platform (GCP). We leverage the same world-class security infrastructure that powers Google's own services."
-                    />
-                    <SecurityCard
-                        icon={Lock}
-                        title="Encrypted in Transit & Rest"
-                        description="All data, including voice and text, is encrypted using industry-standard AES-256 encryption. Your conversations are unintelligible to unauthorized parties."
-                    />
-                    <SecurityCard
-                        icon={Eye}
-                        title="Private by Design"
-                        description="We do not sell your data. Your therapeutic sessions are stored solely to provide you with memory and context. You have full control to delete them."
-                    />
-                    <SecurityCard
-                        icon={Shield}
-                        title="AI Safety Guardrails"
-                        description="Our AI models are trained with strict safety protocols. Crisis detection is automated to prioritize your safety above all else."
-                    />
-                </div>
-
-                <div className="space-y-12 text-white/80 leading-relaxed">
-                    <section>
-                        <h2 className="text-2xl font-semibold text-white mb-4">1. Data Collection</h2>
-                        <p className="mb-4">
-                            We collect data necessary to provide the iSkylar experience, including:
-                        </p>
-                        <ul className="list-disc list-inside space-y-2 ml-4 text-white/60">
-                            <li>Account information (UID, email) for authentication.</li>
-                            <li>Voice audio (temporarily processed for transcription).</li>
-                            <li>Chat logs and session summaries (stored for long-term memory).</li>
-                            <li>Usage metrics (to enforce daily limits).</li>
-                        </ul>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-semibold text-white mb-4">2. How We Use Your Data</h2>
-                        <p>
-                            Your data is used exclusively to:
-                        </p>
-                        <ul className="list-disc list-inside space-y-2 ml-4 text-white/60 mt-2">
-                            <li>Enable the AI to remember your context and past conversations.</li>
-                            <li>Maintain your "Long-Term Memory" and "Key Insights".</li>
-                            <li>Improve the empathetic accuracy of the AI models.</li>
-                        </ul>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-semibold text-white mb-4">3. User Rights</h2>
-                        <p>
-                            You have the right to request a full export of your data or complete deletion of your account and history at any time via the Settings menu.
-                        </p>
-                    </section>
-                </div>
-            </main>
-
-            <Footer />
+export default function PrivacyPolicyPage() {
+  return (
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      {/* Header Navigation */}
+      <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
+          <Link href="/" className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back to Home</span>
+          </Link>
+          <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
+            iSkylar Privacy Policy
+          </span>
         </div>
-    );
-}
+      </header>
 
-function SecurityCard({ icon: Icon, title, description }: any) {
-    return (
-        <div className="p-8 rounded-3xl bg-white/5 border border-white/5 hover:border-purple-500/30 transition-all group">
-            <Icon className="w-8 h-8 text-purple-400 mb-4 group-hover:scale-110 transition-transform" />
-            <h3 className="text-xl font-semibold mb-3 text-white">{title}</h3>
-            <p className="text-white/50 leading-relaxed">{description}</p>
+      {/* Main Content */}
+      <main className="flex-1 container mx-auto px-4 md:px-6 py-12 max-w-4xl space-y-10">
+        {/* Hero Section */}
+        <div className="space-y-4 text-center md:text-left border-b border-white/10 pb-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs text-primary font-semibold">
+            <Shield className="h-3.5 w-3.5" />
+            <span>Privacy by Design</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+            Privacy Policy
+          </h1>
+          <p className="text-foreground/70 text-base md:text-lg">
+            Effective Date: July 24, 2026 | Version 2.0
+          </p>
+          <p className="text-foreground/80 leading-relaxed">
+            At iSkylar™ (operated by ChanceTEK LLC), we believe that emotional well-being requires total privacy and uncompromised trust. Your voice conversations, memory entries, and personal reflection data are encrypted, protected, and strictly under your ownership.
+          </p>
         </div>
-    );
+
+        {/* Policy Sections */}
+        <div className="space-y-8 text-foreground/90 text-sm md:text-base leading-relaxed">
+          
+          <section className="space-y-3 bg-white/5 p-6 rounded-2xl border border-white/10">
+            <div className="flex items-center gap-3">
+              <Lock className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-bold text-foreground">1. Information We Collect</h2>
+            </div>
+            <p>
+              To provide personalized AI therapy companionship and long-term memory continuity across your sessions, we collect:
+            </p>
+            <ul className="list-disc pl-6 space-y-2 text-foreground/80">
+              <li><strong>Account Credentials:</strong> Basic registration data (name, email address, and authentication provider tokens).</li>
+              <li><strong>Voice & Text Inputs:</strong> Audio streams and text inputs provided during active companion turns for real-time speech processing and memory extraction.</li>
+              <li><strong>Long-Term Memory Data:</strong> Key preferences, emotional patterns, goals, and factual updates extracted automatically to preserve session continuity across your companion ecosystem.</li>
+              <li><strong>Technical Metadata:</strong> Anonymized diagnostic logs, performance metrics, and session duration data for platform optimization.</li>
+            </ul>
+          </section>
+
+          <section className="space-y-3 bg-white/5 p-6 rounded-2xl border border-white/10">
+            <div className="flex items-center gap-3">
+              <Database className="h-5 w-5 text-purple-400" />
+              <h2 className="text-xl font-bold text-foreground">2. How We Use Your Data</h2>
+            </div>
+            <p>
+              Your data is utilized strictly to deliver, maintain, and personalize the iSkylar companion experience. Specifically:
+            </p>
+            <ul className="list-disc pl-6 space-y-2 text-foreground/80">
+              <li>To compile your four-tier persistent long-term memory context (Working Memory, Redis High-Speed Cache, Firestore Structured Facts, and Pinecone Vector Store).</li>
+              <li>To tailor response tone and therapeutic guidance for your active agent companion (Skylar, Chancellor, Sydney, Hailey, or Chris).</li>
+              <li>We <strong>NEVER</strong> sell your personal data or conversation transcripts to third parties, advertisers, or data brokers.</li>
+            </ul>
+          </section>
+
+          <section className="space-y-3 bg-white/5 p-6 rounded-2xl border border-white/10">
+            <div className="flex items-center gap-3">
+              <Eye className="h-5 w-5 text-emerald-400" />
+              <h2 className="text-xl font-bold text-foreground">3. Encryption & Data Isolation</h2>
+            </div>
+            <p>
+              All user content is protected in transit using TLS 1.3 encryption and at rest using AES-256 enterprise encryption. Vector embeddings in Pinecone are strictly scoped by your unique User ID, preventing any possibility of cross-user memory leakage.
+            </p>
+          </section>
+
+          <section className="space-y-3 bg-white/5 p-6 rounded-2xl border border-white/10">
+            <h2 className="text-xl font-bold text-foreground">4. Your Data Rights & Deletion</h2>
+            <p>
+              You maintain total authority over your personal memories and conversation history. You may request full memory exports or permanent deletion of your account and all associated vector indexes at any time by contacting <a href="mailto:privacy@chancetek.com" className="text-primary underline">privacy@chancetek.com</a> or using the in-app account settings.
+            </p>
+          </section>
+
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
 }
