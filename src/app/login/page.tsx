@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useFirebaseAuth } from "@/lib/auth";
 import Link from "next/link";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 
 const GoogleIcon = (props) => (
   <svg
@@ -34,6 +34,14 @@ export default function LoginPage() {
 
   return (
     <main className="relative flex min-h-screen w-full items-center justify-center p-4">
+      {/* Back to Landing Page Arrow */}
+      <Link
+        href="/"
+        className="absolute top-6 left-6 z-20 flex items-center gap-2 text-foreground/80 hover:text-foreground bg-white/20 backdrop-blur-md px-4 py-2 rounded-full transition-all hover:bg-white/30 shadow-md font-medium text-sm"
+      >
+        <ArrowLeft size={18} />
+        <span>Back to Home</span>
+      </Link>
       <div className="relative z-10 w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 items-center gap-8">
         <div className="text-foreground text-center md:text-left">
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
