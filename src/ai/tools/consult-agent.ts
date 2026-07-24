@@ -27,7 +27,7 @@ Provide concise, expert advice, actionable strategies, or specific techniques fo
 ${memoryContext.promptBlock}`;
 
       const completion = await openai.chat.completions.create({
-        model: "gpt-5.4-mini",
+        model: "gpt-5.6-terra",
         messages: [
           { role: "system", content: consultationSystemPrompt },
           { role: "user", content: `Consultation Task from ${requestingAgent}: ${task}` }

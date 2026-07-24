@@ -77,7 +77,7 @@ Respond ONLY with valid JSON in this exact structure (do not include markdown co
 }`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-5.4-mini',
+      model: 'gpt-5.6-terra',
       messages: [{ role: 'system', content: extractionPrompt }],
       temperature: 0.1,
     });

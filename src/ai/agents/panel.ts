@@ -41,7 +41,7 @@ ${memoryContext.promptBlock}`;
 
     try {
       const completion = await openai.chat.completions.create({
-        model: 'gpt-5.4-mini',
+        model: 'gpt-5.6-terra',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Panel Discussion Topic: "${prompt}"` },
