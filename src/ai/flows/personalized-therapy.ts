@@ -37,7 +37,7 @@ const personalizedTherapyFlow = ai.defineFlow(
     inputSchema: PersonalizedTherapyInputSchema,
     outputSchema: PersonalizedTherapyOutputSchema,
   },
-  async input => {
+  async (input: PersonalizedTherapyInput) => {
     const {output} = await prompt(input);
     return output!;
   }

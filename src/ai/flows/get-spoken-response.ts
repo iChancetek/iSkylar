@@ -19,7 +19,7 @@ export async function getSpokenResponse(input: SpokenResponseInput): Promise<Spo
     // If it's the start of the session, skip safety check
     if (input.userInput === "ISKYLAR_SESSION_START") {
       const aiResult = await askiSkylar({ ...input, language: lang });
-      const ttsResult = await textToSpeech(aiResult.iSkylarResponse, lang, agentVoice);
+      const ttsResult = await textToSpeech(aiResult.iSkylarResponse, lang, agentVoice as any);
       return {
         isSafetyResponse: false,
         responseText: aiResult.iSkylarResponse,
@@ -38,7 +38,7 @@ export async function getSpokenResponse(input: SpokenResponseInput): Promise<Spo
 
     // Prioritize safety response if risk detected
     if (safetyResult.safetyResponse && safetyResult.safetyResponse.trim() !== "") {
-      const ttsResult = await textToSpeech(safetyResult.safetyResponse, lang, agentVoice);
+      const ttsResult = await textToSpeech(safetyResult.safetyResponse, lang, agentVoice as any);
       return {
         isSafetyResponse: true,
         responseText: safetyResult.safetyResponse,
@@ -49,7 +49,7 @@ export async function getSpokenResponse(input: SpokenResponseInput): Promise<Spo
     }
 
     // Standard therapy response
-    const ttsResult = await textToSpeech(aiResult.iSkylarResponse, lang, agentVoice);
+    const ttsResult = await textToSpeech(aiResult.iSkylarResponse, lang, agentVoice as any);
 
     return {
       isSafetyResponse: false,

@@ -2,26 +2,22 @@ import { HumanMessage, AIMessage, SystemMessage, BaseMessage } from "@langchain/
 import { StateGraph, END } from "@langchain/langgraph";
 import { ChatOpenAI } from "@langchain/openai";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
-import { ALL_TOOLS } from "../tools/autonomous-tools";
+import { ALL_TOOLS, getAggregatedTools } from "../tools/autonomous-tools";
 import { getOpenAIKey } from "@/lib/secrets";
 import { RunnableConfig } from "@langchain/core/runnables";
 
 // --- State Definition ---
-// Using strict typing for clearer state management
 export type AgentState = {
     messages: BaseMessage[];
     sender?: string;
+    targetAgent?: string;
+    userId?: string;
 };
 
 // --- Model Initialization ---
-// We initialize lazily to ensure API key is available
-import { getAggregatedTools } from "../tools/autonomous-tools";
-
-// --- Model Initialization ---
-// We initialize lazily to ensure API key is available
 const getModel = async () => {
     const apiKey = await getOpenAIKey();
-    const tools = await getAggregatedTools(); // Dynamic Fetch (MCP + Static)
+    const tools = await getAggregatedTools();
 
     const primaryModel = new ChatOpenAI({
         modelName: "gpt-5.6-terra",
@@ -42,7 +38,17 @@ const getModel = async () => {
 
 // --- Nodes ---
 
-// 1. Agent Node: Calls the LLM
+// 1. Supervisor Node: Coordinates complex workflows and A2A delegation
+const supervisorNode = async (state: AgentState, config?: RunnableConfig) => {
+    const messages = state.messages;
+    const lastUserMsg = messages[messages.length - 1]?.content || "";
+
+    // Supervisor inspection for A2A orchestration
+    console.log(`[Supervisor] Inspecting workflow turn: "${typeof lastUserMsg === 'string' ? lastUserMsg.slice(0, 50) : 'message'}"`);
+    return { sender: "supervisor" };
+};
+
+// 2. Agent Node: Calls the LLM with tool capabilities
 const agentNode = async (state: AgentState, config?: RunnableConfig) => {
     const model = await getModel();
     const { messages } = state;
@@ -50,19 +56,10 @@ const agentNode = async (state: AgentState, config?: RunnableConfig) => {
     return { messages: [response], sender: "agent" };
 };
 
-// 2. Tool Node: Executes tools
-// We initialize lazily to capture dynamic tools.
+// 3. Tool Node: Executes tools (Tavily, Nodemailer, Handoff, Consult, MCP)
 const toolNode = async (state: AgentState) => {
     const tools = await getAggregatedTools();
     const toolExecutor = new ToolNode(tools);
-    // ToolNode is a runnable, so we invoke it.
-    // However, ToolNode expects to be a node in the graph. 
-    // In LangGraphJS, we can pass a function that returns a ToolNode? No.
-    // We will use the Node's input/output directly if we can, OR we just trust that
-    // the model binding works.
-
-    // WORKAROUND: For this prototype, we rebuild the tool node logic manually or just use the static list + dynamic fetch?
-    // LangGraph expects `tools` to be known.
     return toolExecutor.invoke(state);
 };
 
@@ -84,13 +81,18 @@ const workflow = new StateGraph<AgentState>({
             reducer: (x: BaseMessage[], y: BaseMessage[]) => x.concat(y),
         },
         sender: null,
+        targetAgent: null,
+        userId: null,
     }
 })
+    .addNode("supervisor", supervisorNode)
     .addNode("agent", agentNode)
     .addNode("tools", toolNode)
-    .addEdge("__start__", "agent")
+    .addEdge("__start__", "supervisor")
+    .addEdge("supervisor", "agent")
     .addConditionalEdges("agent", shouldContinue)
     .addEdge("tools", "agent");
 
 // Compile the graph
 export const appGraph = workflow.compile();
+

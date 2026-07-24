@@ -4,6 +4,7 @@ import { mcpManager } from "../mcp/mcp-client";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
 import { handoffToAgentTool } from "./handoff";
+import { consultAgentTool } from "./consult-agent";
 
 // --- Production Helpers ---
 const serviceUnavailable = (serviceName: string) => {
@@ -60,14 +61,12 @@ export const getAggregatedTools = async () => {
         tavilySearchTool,    // Real (Tavily API)
         bookTravelTool,      // Fallback
         orderFoodTool,       // Fallback
-        manageCalendarTool,   // Fallback
-        handoffToAgentTool   // Native Handoff
+        manageCalendarTool,  // Fallback
+        handoffToAgentTool,  // Native Relay Handoff
+        consultAgentTool,    // Backstage Consult A2A Tool
     ];
 
     // 2. Dynamic Tools (From connected MCP servers)
-    // In a real app, you would call connectToSSEServer() somewhere before this (e.g., app init).
-    // mcpManager.connectToSSEServer("travel_server", "http://localhost:3001/sse");
-
     const mcpTools = await mcpManager.getLangChainTools();
     console.log(`[MCP] Discovered ${mcpTools.length} tools from connected servers.`);
 
@@ -75,4 +74,13 @@ export const getAggregatedTools = async () => {
 };
 
 // Legacy array for immediate import (contains static only until init)
-export const ALL_TOOLS = [sendEmailTool, tavilySearchTool, bookTravelTool, orderFoodTool, manageCalendarTool, handoffToAgentTool];
+export const ALL_TOOLS = [
+    sendEmailTool,
+    tavilySearchTool,
+    bookTravelTool,
+    orderFoodTool,
+    manageCalendarTool,
+    handoffToAgentTool,
+    consultAgentTool,
+];
+

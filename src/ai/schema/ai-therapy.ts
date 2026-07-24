@@ -3,15 +3,13 @@ import { z } from 'genkit';
 
 export const iSkylarInputSchema = z.object({
   userInput: z.string().describe('The user input from voice or text. Can be "ISKYLAR_SESSION_START" to initiate the session.'),
-  agentId: z.string().optional().describe('The ID of the active agent'),
-  userId: z.string().optional().describe('The ID of the user'),
+  agentId: z.enum(['skylar', 'chancellor', 'sydney', 'hailey', 'chris']).optional().default('skylar').describe('The specific agent persona to respond as.'),
+  userId: z.string().optional().describe('The user ID for retrieving long-term memory.'),
   conversationId: z.string().optional().describe('The ID of the current conversation'),
   sessionState: z.string().optional().describe('A JSON string representing the session state, including conversational themes, emotional patterns, intervention readiness, user name if known, and topics. The AI must update this state and return it.'),
   language: z.string().optional().default('en').describe('The language for the conversation (e.g., "en", "es").'),
   wasInterrupted: z.boolean().optional().describe('True if the user interrupted iSkylar mid-response.'),
   interruptedDuring: z.string().optional().describe('What iSkylar was saying when interrupted, for context.'),
-  agentId: z.enum(['skylar', 'chancellor', 'sydney', 'hailey', 'chris']).optional().default('skylar').describe('The specific agent persona to respond as.'),
-  userId: z.string().optional().describe('The user ID for retrieving long-term memory.'),
 });
 export type iSkylarInput = z.infer<typeof iSkylarInputSchema>;
 

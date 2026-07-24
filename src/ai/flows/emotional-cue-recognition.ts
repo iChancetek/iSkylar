@@ -29,7 +29,7 @@ const emotionalCueRecognitionFlow = ai.defineFlow(
     inputSchema: EmotionalCueRecognitionInputSchema,
     outputSchema: EmotionalCueRecognitionOutputSchema,
   },
-  async input => {
+  async (input: EmotionalCueRecognitionInput) => {
     const {output} = await prompt(input);
     return output!;
   }

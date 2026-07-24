@@ -1,4 +1,4 @@
-import { openai } from '@/lib/openai';
+import { getOpenAIClient } from '@/lib/openai';
 import type { Conversation, MemoryCategory, MemoryEntry } from './types';
 import { saveMemory } from './memory-store';
 import { Timestamp } from 'firebase/firestore';
@@ -13,6 +13,7 @@ export async function extractAndSaveMemories(conversation: Conversation): Promis
   if (!transcript.trim()) return;
 
   try {
+    const openai = await getOpenAIClient();
     const messages = [
       {
         role: "system",

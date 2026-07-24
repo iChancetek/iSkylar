@@ -10,6 +10,8 @@ import { CORE_PHILOSOPHY_PROMPT } from '@/ai/agents/core-philosophy';
 import { retrieveContext } from '@/ai/memory/rag-pipeline';
 import { appendMessage, getConversation, endConversation } from '@/lib/memory/conversation-store';
 import { extractAndSaveMemories } from '@/lib/memory/summarizer';
+import { compileUserMemory } from '@/lib/memory/compiler';
+import { analyzeAndExtractMemories } from '@/lib/memory/extractor';
 
 export async function askiSkylar(input: iSkylarInput): Promise<iSkylarOutput> {
   const userInput = input.userInput || '';
@@ -24,10 +26,19 @@ export async function askiSkylar(input: iSkylarInput): Promise<iSkylarOutput> {
   // Retrieve the specific agent's configuration
   const agent = getAgent(agentId);
 
-  // Retrieve relevant long-term memory context via RAG pipeline
-  let memoryContext = '';
+  // Retrieve compiled four-tier memory context (L1 + L2 Redis + L2 Firestore + L3 Pinecone)
+  let compiledMemoryBlock = '';
   if (userId) {
-    memoryContext = await retrieveContext(userId, agentId, userInput);
+    // Asynchronously trigger automatic fact & emotion extraction in background (non-blocking)
+    analyzeAndExtractMemories(userId, userInput, conversationId, agentId).catch((err) =>
+      console.warn('[AI Therapy] Background memory extraction error:', err)
+    );
+
+    const compiledMemory = await compileUserMemory(userId, userInput);
+    compiledMemoryBlock = compiledMemory.promptBlock;
+  } else {
+    // Fallback if no userId
+    compiledMemoryBlock = await retrieveContext('', agentId, userInput);
   }
 
   // Build the system prompt using the agent's specific instructions
@@ -37,7 +48,7 @@ ${CORE_PHILOSOPHY_PROMPT}
 
 ## Conversation Language
 The conversation language is: ${language}. All your responses MUST be in this language.
-${memoryContext}`;
+${compiledMemoryBlock}`;
 
   // User message with interruption context if applicable
   let userMessage = userInput;

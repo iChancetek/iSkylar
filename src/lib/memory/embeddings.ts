@@ -1,4 +1,4 @@
-import { openai } from '@/lib/openai';
+import { getOpenAIClient } from '@/lib/openai';
 
 /**
  * Generates a vector embedding for the given text using OpenAI's text-embedding-3-small.
@@ -8,6 +8,7 @@ import { openai } from '@/lib/openai';
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
   try {
+    const openai = await getOpenAIClient();
     const response = await openai.embeddings.create({
       model: 'text-embedding-3-small',
       input: text,
@@ -20,3 +21,4 @@ export async function generateEmbedding(text: string): Promise<number[]> {
     throw new Error('Failed to generate vector embedding.');
   }
 }
+
