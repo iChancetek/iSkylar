@@ -5,7 +5,7 @@ import { ShieldCheck, Heart, AlertTriangle } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/10 py-16 text-foreground bg-black/60 backdrop-blur-md">
+    <footer className="relative z-20 border-t border-white/10 py-16 text-foreground bg-black/80 backdrop-blur-md pointer-events-auto">
       <div className="container mx-auto px-4 md:px-6 space-y-10 max-w-6xl">
         
         {/* Brand & Tagline Header */}
@@ -43,22 +43,22 @@ export function Footer() {
         {/* Quick Links Navigation */}
         <div className="space-y-3 pt-2 text-center">
           <h3 className="text-xs uppercase tracking-widest font-semibold text-foreground/50">Quick Links</h3>
-          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs md:text-sm text-foreground/80 font-medium">
-            <Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs md:text-sm text-foreground/80 font-medium z-30 relative">
+            <Link href="/privacy" className="hover:text-primary hover:underline transition-colors cursor-pointer p-1">Privacy Policy</Link>
             <span className="text-foreground/30">•</span>
-            <Link href="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
+            <Link href="/terms" className="hover:text-primary hover:underline transition-colors cursor-pointer p-1">Terms of Service</Link>
             <span className="text-foreground/30">•</span>
-            <Link href="/security" className="hover:text-primary transition-colors">Security</Link>
+            <Link href="/security" className="hover:text-primary hover:underline transition-colors cursor-pointer p-1">Security</Link>
             <span className="text-foreground/30">•</span>
-            <Link href="/trust" className="hover:text-primary transition-colors">Trust Center</Link>
+            <Link href="/trust" className="hover:text-primary hover:underline transition-colors cursor-pointer p-1">Trust Center</Link>
             <span className="text-foreground/30">•</span>
-            <Link href="/cookies" className="hover:text-primary transition-colors">Cookie Policy</Link>
+            <Link href="/cookies" className="hover:text-primary hover:underline transition-colors cursor-pointer p-1">Cookie Policy</Link>
             <span className="text-foreground/30">•</span>
-            <Link href="/accessibility" className="hover:text-primary transition-colors">Accessibility</Link>
+            <Link href="/accessibility" className="hover:text-primary hover:underline transition-colors cursor-pointer p-1">Accessibility</Link>
             <span className="text-foreground/30">•</span>
-            <Link href="/contact" className="hover:text-primary transition-colors">Contact Us</Link>
+            <Link href="/contact" className="hover:text-primary hover:underline transition-colors cursor-pointer p-1">Contact Us</Link>
             <span className="text-foreground/30">•</span>
-            <Link href="/help" className="hover:text-primary transition-colors">Help Center</Link>
+            <Link href="/help" className="hover:text-primary hover:underline transition-colors cursor-pointer p-1">Help Center</Link>
           </div>
         </div>
 
