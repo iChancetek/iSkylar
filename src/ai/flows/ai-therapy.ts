@@ -54,9 +54,9 @@ ${compiledMemoryBlock}`;
   let userMessage = userInput;
 
   if (input.userInput === "ISKYLAR_SESSION_START") {
-    userMessage = "This is the start of the session. Give a warm, brief greeting (10-20 words) in the specified language.";
+    userMessage = `This is the start of the session. Introduce yourself clearly as ${agent.name}, ${agent.title}. Briefly state your unique role ("${agent.description}") and give a warm, distinct greeting (20-30 words) in ${language}.`;
   } else if (input.userInput === "ISKYLAR_AGENT_SWITCH") {
-    userMessage = "The user just switched to you. Greet the user and briefly introduce yourself and your role (20-30 words).";
+    userMessage = `The user just switched the conversation to you. Introduce yourself directly as ${agent.name}, ${agent.title}. Briefly explain your unique role ("${agent.description}") and greet the user warmly (20-30 words) in ${language}.`;
   } else if (wasInterrupted && interruptedDuring) {
     userMessage = `[INTERRUPTION CONTEXT]: The user just interrupted you mid-response. You were saying: "${interruptedDuring}"
 Acknowledge naturally: "Okay—" or "Yeah, go ahead" then respond to their new input.
