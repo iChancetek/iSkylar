@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Brain, Heart, Shield, Sparkles, Mic, Clock, Volume2, VolumeX } from "lucide-react";
+import { Brain, Heart, Shield, Sparkles, Mic, Clock, Volume2, VolumeX, Briefcase, Sun, Smile, Wind, Users, ArrowRight } from "lucide-react";
 import { Footer } from "@/components/footer";
 import { useRef, useState } from "react";
 
@@ -188,20 +188,142 @@ export default function LandingPage() {
                         </div>
                     </div>
                 </section>
+
+                {/* Polished Team of Experts Section */}
+                <section className="container mx-auto px-4 py-20 md:py-28 text-center max-w-6xl">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-4 py-1.5 text-xs md:text-sm font-semibold text-purple-300 backdrop-blur-md mb-6">
+                        <Users className="h-4 w-4 text-purple-400" />
+                        <span>5 Specialized Companions • One Unified Memory</span>
+                    </div>
+
+                    <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-300 to-sky-400">
+                        A Team of Experts — Tailored to Every Need
+                    </h2>
+                    <p className="text-muted-foreground max-w-3xl mx-auto mb-14 text-base md:text-lg leading-relaxed">
+                        You&apos;re not limited to a single perspective. Switch seamlessly between 5 distinct AI companions—each with a unique voice, role, and therapeutic background, all sharing identical memory of your journey.
+                    </p>
+
+                    {/* 5 Companion Cards Grid */}
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 text-left">
+                        
+                        {/* 1. Skylar */}
+                        <div className="group relative rounded-3xl border border-purple-500/30 bg-gradient-to-br from-purple-950/40 via-purple-900/10 to-background/50 p-7 backdrop-blur-md transition-all duration-300 hover:border-purple-400 hover:shadow-2xl hover:shadow-purple-500/20 hover:-translate-y-1">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                                    <Brain className="h-6 w-6" />
+                                </div>
+                                <span className="rounded-full bg-purple-500/10 px-3 py-1 text-xs font-bold text-purple-300 border border-purple-500/20">
+                                    Voice: Nova
+                                </span>
+                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-1">Skylar</h3>
+                            <p className="text-xs uppercase font-extrabold tracking-wider text-purple-400 mb-3">
+                                The Therapist
+                            </p>
+                            <p className="text-sm text-foreground/80 leading-relaxed mb-6">
+                                Warm, empathetic, and clinically grounded. Skylar is your safe harbor for deep emotional processing, healing, CBT techniques, and self-reflection.
+                            </p>
+                            <div className="flex items-center text-xs font-semibold text-purple-300">
+                                <span>Emotional Support & Guidance</span>
+                            </div>
+                        </div>
+
+                        {/* 2. Chancellor */}
+                        <div className="group relative rounded-3xl border border-sky-500/30 bg-gradient-to-br from-sky-950/40 via-slate-900/10 to-background/50 p-7 backdrop-blur-md transition-all duration-300 hover:border-sky-400 hover:shadow-2xl hover:shadow-sky-500/20 hover:-translate-y-1">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500/20 text-sky-400 border border-sky-500/30">
+                                    <Briefcase className="h-6 w-6" />
+                                </div>
+                                <span className="rounded-full bg-sky-500/10 px-3 py-1 text-xs font-bold text-sky-300 border border-sky-500/20">
+                                    Voice: Onyx
+                                </span>
+                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-1">Chancellor</h3>
+                            <p className="text-xs uppercase font-extrabold tracking-wider text-sky-400 mb-3">
+                                Executive Assistant & Strategy
+                            </p>
+                            <p className="text-sm text-foreground/80 leading-relaxed mb-6">
+                                Loyal, efficient, and sharply witty. Chancellor keeps you organized, strategic, and focused on executing your highest career, tech, and financial goals.
+                            </p>
+                            <div className="flex items-center text-xs font-semibold text-sky-300">
+                                <span>Productivity & Execution</span>
+                            </div>
+                        </div>
+
+                        {/* 3. Sydney */}
+                        <div className="group relative rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-950/40 via-amber-900/10 to-background/50 p-7 backdrop-blur-md transition-all duration-300 hover:border-amber-400 hover:shadow-2xl hover:shadow-amber-500/20 hover:-translate-y-1">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                                    <Sun className="h-6 w-6" />
+                                </div>
+                                <span className="rounded-full bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-300 border border-amber-500/20">
+                                    Voice: Shimmer
+                                </span>
+                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-1">Sydney</h3>
+                            <p className="text-xs uppercase font-extrabold tracking-wider text-amber-400 mb-3">
+                                The Optimist
+                            </p>
+                            <p className="text-sm text-foreground/80 leading-relaxed mb-6">
+                                Sunshine energy. Sydney is here to lift your mood, celebrate your wins (big or small), and remind you of the bright side with actionable hope.
+                            </p>
+                            <div className="flex items-center text-xs font-semibold text-amber-300">
+                                <span>Motivation & Positivity</span>
+                            </div>
+                        </div>
+
+                        {/* 4. Hailey */}
+                        <div className="group relative rounded-3xl border border-pink-500/30 bg-gradient-to-br from-pink-950/40 via-rose-900/10 to-background/50 p-7 backdrop-blur-md transition-all duration-300 hover:border-pink-400 hover:shadow-2xl hover:shadow-pink-500/20 hover:-translate-y-1">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-500/20 text-pink-400 border border-pink-500/30">
+                                    <Smile className="h-6 w-6" />
+                                </div>
+                                <span className="rounded-full bg-pink-500/10 px-3 py-1 text-xs font-bold text-pink-300 border border-pink-500/20">
+                                    Voice: Fable
+                                </span>
+                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-1">Hailey</h3>
+                            <p className="text-xs uppercase font-extrabold tracking-wider text-pink-400 mb-3">
+                                Best Friend
+                            </p>
+                            <p className="text-sm text-foreground/80 leading-relaxed mb-6">
+                                Smart, playful, and relentlessly honest. Hailey gives you the reality check you need with warmth, humor, and unwavering loyalty.
+                            </p>
+                            <div className="flex items-center text-xs font-semibold text-pink-300">
+                                <span>Direct & Honest Sounding Board</span>
+                            </div>
+                        </div>
+
+                        {/* 5. Chris */}
+                        <div className="group relative rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 via-teal-900/10 to-background/50 p-7 backdrop-blur-md transition-all duration-300 hover:border-emerald-400 hover:shadow-2xl hover:shadow-emerald-500/20 hover:-translate-y-1 md:col-span-2 lg:col-span-1">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                    <Wind className="h-6 w-6" />
+                                </div>
+                                <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-300 border border-emerald-500/20">
+                                    Voice: Echo
+                                </span>
+                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-1">Chris</h3>
+                            <p className="text-xs uppercase font-extrabold tracking-wider text-emerald-400 mb-3">
+                                The Chill One
+                            </p>
+                            <p className="text-sm text-foreground/80 leading-relaxed mb-6">
+                                Grounded and calm. Chris is the late-night conversation partner who helps you slow down, breathe, decompress, and practice mindfulness.
+                            </p>
+                            <div className="flex items-center text-xs font-semibold text-emerald-300">
+                                <span>Mindfulness & Relaxation</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
             </main>
-
-            {/* Multi-Agent Ecosystem Section */}
-            <section className="container mx-auto px-4 py-16 text-center">
-                <h2 className="text-3xl font-bold mb-6">A Team of Experts</h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-                    You're not limited to just one personality. Choose from 5 distinct AI companions, including Skylar (Therapist), Chancellor (Executive), and more.
-                </p>
-
-            </section>
 
             <Footer />
         </div>
     );
 }
+
 
 
