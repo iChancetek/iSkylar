@@ -277,7 +277,48 @@ export default function VoiceInterface() {
       console.error("Error during text-only fallback:", fallbackError);
       toast({ title: "AI Error", description: "Could not get a text response from iSkylar.", variant: "destructive" });
     }
-  }, [sessionState, toast, language, handleSessionEnd, currentAgent, setChatHistory, user]);
+  }, [sessionState, toast, language, handleSessionEnd, currentAgent, setChatHistory, user, conversationId]);
+
+  const executeAgentSwitch = useCallback(async (newAgentId: AgentId) => {
+    if (newAgentId === currentAgent) return;
+
+    initializeAudioContext();
+    setCurrentAgent(newAgentId);
+    toast({
+      title: `Switched to ${AGENTS[newAgentId].name}`,
+      description: `${AGENTS[newAgentId].role} — ${AGENTS[newAgentId].description}`,
+    });
+
+    if (sessionStarted) {
+      setIsInitializing(true);
+      try {
+        const response = await getSpokenResponse({
+          userInput: "ISKYLAR_AGENT_SWITCH",
+          sessionState,
+          language,
+          agentId: newAgentId,
+          userId: user?.uid,
+          conversationId,
+        });
+
+        if (!response.error && response.responseText) {
+          setSessionState(response.updatedSessionState);
+          const greetingMessage: Omit<ChatMessage, 'icon'> = {
+            id: `${newAgentId}-switch-${Date.now()}`,
+            speaker: AGENTS[newAgentId].name,
+            text: response.responseText,
+          };
+          setChatHistory(prev => [...prev, greetingMessage]);
+          setCurrentResponse(response.responseText);
+          await playAudio(response.audioDataUri, false);
+        }
+      } catch (e) {
+        console.error("Agent switch error:", e);
+      } finally {
+        setIsInitializing(false);
+      }
+    }
+  }, [currentAgent, initializeAudioContext, sessionStarted, sessionState, language, user, conversationId, playAudio, setChatHistory, toast]);
 
   const handleSendMessage = useCallback(async (userInput: string, interrupted: boolean = false) => {
     const finalUserInput = userInput.trim();
@@ -285,9 +326,6 @@ export default function VoiceInterface() {
 
     setIsSending(true);
     setChatHistory(prev => [...prev, { id: `user-${Date.now()}`, speaker: "user", text: finalUserInput }]);
-
-    // Pass preferences to AI for context awareness if needed? 
-    // For now we just use language.
 
     if (isVoiceQuotaReached) {
       await handleTextOnlyResponse(finalUserInput);
@@ -323,6 +361,11 @@ export default function VoiceInterface() {
 
       await playAudio(response.audioDataUri, response.sessionShouldEnd);
 
+      // Handle automatic agent handoff if tool requested targetAgentId
+      if (response.targetAgentId && response.targetAgentId !== currentAgent && AGENTS[response.targetAgentId as AgentId]) {
+        await executeAgentSwitch(response.targetAgentId as AgentId);
+      }
+
     } catch (error: any) {
       console.error("Error sending message:", error);
 
@@ -343,7 +386,7 @@ export default function VoiceInterface() {
     } finally {
       setIsSending(false);
     }
-  }, [sessionState, toast, sessionStarted, playAudio, isVoiceQuotaReached, handleTextOnlyResponse, language, currentResponse, user, currentAgent, setChatHistory]);
+  }, [sessionState, toast, sessionStarted, playAudio, isVoiceQuotaReached, handleTextOnlyResponse, language, currentResponse, user, currentAgent, setChatHistory, conversationId, executeAgentSwitch]);
 
   const startListening = useCallback(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -584,43 +627,8 @@ export default function VoiceInterface() {
       {/* Agent Sidebar (Left) */}
       <AgentSidebar
         currentAgent={currentAgent}
-        onAgentChange={async (id) => {
-          if (id === currentAgent) return;
-          setCurrentAgent(id);
-          toast({ title: `Switched to ${AGENTS[id].name}`, description: AGENTS[id].role });
-
-          // RESET for new agent
-          clearChatHistory();
-          setSessionState(undefined); // Clear deep context so they start fresh-ish (but we keep long-term memory via backend)
-
-          if (sessionStarted) {
-            // Trigger immediate intro
-            setIsInitializing(true);
-            try {
-              const response = await getSpokenResponse({
-                userInput: "ISKYLAR_AGENT_SWITCH",
-                sessionState: undefined,
-                language,
-                agentId: id,
-                userId: user?.uid
-              });
-
-              if (!response.error) {
-                setSessionState(response.updatedSessionState);
-                const greetingMessage: ChatMessage = {
-                  id: `${id}-greeting-${Date.now()}`,
-                  speaker: AGENTS[id].name,
-                  text: response.responseText,
-                };
-                setChatHistory([greetingMessage]);
-                await playAudio(response.audioDataUri, false);
-              }
-            } catch (e) {
-              console.error("Agent switch error", e);
-            } finally {
-              setIsInitializing(false);
-            }
-          }
+        onAgentChange={(id) => {
+          executeAgentSwitch(id as AgentId);
         }}
       />
 
