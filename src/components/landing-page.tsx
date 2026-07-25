@@ -240,13 +240,13 @@ export default function LandingPage() {
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-1">Chancellor</h3>
                             <p className="text-xs uppercase font-extrabold tracking-wider text-sky-400 mb-3">
-                                Executive Assistant & Strategy
+                                Strategist, Mentor & Coach
                             </p>
                             <p className="text-sm text-foreground/80 leading-relaxed mb-6">
-                                Loyal, efficient, and sharply witty. Chancellor keeps you organized, strategic, and focused on executing your highest career, tech, and financial goals.
+                                Embodiment of wisdom, calm confidence, discipline, and high-character leadership. Your strategist for career, AI tech, mindfulness, and personal growth.
                             </p>
                             <div className="flex items-center text-xs font-semibold text-sky-300">
-                                <span>Productivity & Execution</span>
+                                <span>Wisdom, Strategy & Growth</span>
                             </div>
                         </div>
 

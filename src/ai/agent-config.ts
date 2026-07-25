@@ -24,8 +24,8 @@ export const AGENTS: Record<AgentId, AgentMetadata> = {
     chancellor: {
         id: 'chancellor',
         name: 'Chancellor',
-        role: 'CEO, Founder & Tech Expert',
-        description: 'Brilliant tech founder, friend, and builder.',
+        role: 'Strategist, Mentor & Coach',
+        description: 'Wisdom, calm confidence, emotional intelligence, discipline, and high-character leadership.',
         voiceId: 'onyx'
     },
     sydney: {

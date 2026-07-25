@@ -50,8 +50,8 @@ export default function LearnMorePage() {
                         />
                         <AgentCard
                             name="Chancellor"
-                            role="Executive Assistant"
-                            description="Loyal, efficient, and sharply witty. Chancellor keeps you organized and focused on your goals."
+                            role="Strategist, Mentor & Coach"
+                            description="Embodiment of wisdom, calm confidence, emotional intelligence, discipline, and high-character leadership."
                             color="bg-slate-700"
                         />
                         <AgentCard
