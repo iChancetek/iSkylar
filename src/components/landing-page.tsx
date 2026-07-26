@@ -56,12 +56,12 @@ export default function LandingPage() {
                             loop
                             muted
                             playsInline
-                            className="h-full w-full object-cover opacity-60"
+                            className="h-full w-full object-cover opacity-90"
                         >
                             <source src="/background-video.mp4" type="video/mp4" />
                         </video>
-                        {/* Dark gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-[#07060b]/75 to-[#07060b]" />
+                        {/* Subtle gradient overlay for high visibility & text legibility */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-[#07060b]/35 to-[#07060b]" />
                     </div>
 
                     {/* Audio Toggle Button */}
