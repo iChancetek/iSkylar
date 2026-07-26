@@ -304,8 +304,13 @@ export const useFirebaseAuth = () => {
   };
 
   const handleLogout = async () => {
-    await signOut(auth);
-    router.push("/login");
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Error signing out:", error);
+    } finally {
+      window.location.href = "/";
+    }
   };
 
   return {

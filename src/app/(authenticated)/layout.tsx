@@ -15,9 +15,9 @@ export default function AuthenticatedLayout({
   const router = useRouter();
 
   useEffect(() => {
-    // If the loading is finished and there's no user, redirect.
+    // If the loading is finished and there's no user, redirect to landing page.
     if (!loading && !user) {
-      router.push("/login");
+      router.push("/");
     }
   }, [user, loading, router]);
 

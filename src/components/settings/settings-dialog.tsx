@@ -9,14 +9,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { useUserPreferences, LanguageCode, SessionDuration } from "@/lib/user-preferences";
-import { useAuthContext } from "@/lib/auth";
+import { useAuthContext, useFirebaseAuth } from "@/lib/auth";
 import { Settings, User, Monitor, Clock, Mic, Languages, Shield, LogOut, Check, History, MessageSquare, Calendar } from "lucide-react";
 import { getAllUserMemories, getSessionDetails, SessionMemory } from '@/lib/session-memory';
 import { AGENTS, AgentId } from "@/ai/agent-config";
 
 export function SettingsDialog({ children, onResumeSession }: { children: React.ReactNode, onResumeSession?: (session: SessionMemory) => void }) {
     const { preferences, updatePreferences, remainingMinutes } = useUserPreferences();
-    const { user, handleLogout } = useFirebaseAuthOps();
+    const { user } = useAuthContext();
+    const { handleLogout } = useFirebaseAuth();
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -517,8 +518,4 @@ function LanguageSelector({ value, onChange }: { value: LanguageCode, onChange: 
 }
 
 
-// Mock hook for auth ops since real usage might vary in simple comp
-function useFirebaseAuthOps() {
-    const { user } = useAuthContext();
-    return { user, handleLogout: () => window.location.href = '/login' };
-}
+
