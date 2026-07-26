@@ -71,18 +71,6 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
-
-  /* Light mode gradient background */
-  body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    background-attachment: fixed;
-  }
-
-  /* Dark mode stunning gradient */
-  .dark body {
-    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-    background-attachment: fixed;
-  }
 }
 
 /* Glassmorphism utilities */
