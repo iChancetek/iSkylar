@@ -352,9 +352,9 @@ export function AIAssistantWidget() {
 
       {/* Expandable Chat Window */}
       {isOpen && (
-        <div className="w-[360px] sm:w-[410px] h-[560px] rounded-3xl bg-transparent border border-purple-500/40 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="w-[360px] sm:w-[410px] h-[560px] rounded-3xl bg-[#090715]/50 backdrop-blur-md border border-purple-500/40 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
           {/* Header */}
-          <div className="p-4 bg-transparent border-b border-white/10 flex items-center justify-between">
+          <div className="p-4 bg-purple-950/30 backdrop-blur-md border-b border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300">
                 <Sparkles className="h-5 w-5 text-purple-400" />
@@ -444,7 +444,7 @@ export function AIAssistantWidget() {
           </div>
 
           {/* Agent Action Chips */}
-          <div className="px-3 py-2 bg-transparent border-b border-white/10 flex gap-1.5 overflow-x-auto custom-scrollbar text-xs">
+          <div className="px-3 py-2 bg-black/30 backdrop-blur-md border-b border-white/10 flex gap-1.5 overflow-x-auto custom-scrollbar text-xs">
             <button
               onClick={() => handleSend("Take me to Admin Dashboard")}
               className="shrink-0 px-2.5 py-1 rounded-full bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-purple-200 text-[11px] font-medium transition-colors flex items-center gap-1"
@@ -507,10 +507,10 @@ export function AIAssistantWidget() {
 
                 <div
                   className={cn(
-                    "px-3.5 py-2.5 rounded-2xl whitespace-pre-wrap leading-relaxed max-w-[88%] flex flex-col gap-2 border",
+                    "px-3.5 py-2.5 rounded-2xl whitespace-pre-wrap leading-relaxed max-w-[88%] flex flex-col gap-2 backdrop-blur-md border shadow-md",
                     msg.sender === "user"
-                      ? "bg-blue-600/20 text-blue-50 border-blue-500/30 rounded-tr-xs"
-                      : "bg-purple-950/20 text-white border-purple-500/30 rounded-tl-xs"
+                      ? "bg-blue-600/40 text-blue-50 border-blue-500/40 rounded-tr-xs"
+                      : "bg-[#140e2b]/85 text-white border-purple-500/30 rounded-tl-xs"
                   )}
                 >
                   <span>{msg.text}</span>
@@ -545,7 +545,7 @@ export function AIAssistantWidget() {
 
           {/* Listening Overlay Bar */}
           {isListening && (
-            <div className="px-4 py-2 bg-transparent border-t border-purple-500/40 flex items-center justify-between text-purple-200 text-xs font-semibold animate-pulse">
+            <div className="px-4 py-2 bg-purple-950/40 backdrop-blur-md border-t border-purple-500/40 flex items-center justify-between text-purple-200 text-xs font-semibold animate-pulse">
               <span className="flex items-center gap-2">
                 <Mic className="w-4 h-4 text-purple-400 animate-bounce" />
                 Listening via Whisper STT ({selectedLanguage.nativeName})...
@@ -562,7 +562,7 @@ export function AIAssistantWidget() {
               e.preventDefault();
               handleSend();
             }}
-            className="p-3 bg-transparent border-t border-white/10 flex items-center gap-2"
+            className="p-3 bg-black/40 backdrop-blur-md border-t border-white/10 flex items-center gap-2"
           >
             <Button
               type="button"
@@ -584,7 +584,7 @@ export function AIAssistantWidget() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder={selectedLanguage.placeholder}
-              className="h-9 text-xs bg-transparent border-white/20 text-white placeholder:text-white/50 focus:border-purple-500 rounded-xl"
+              className="h-9 text-xs bg-white/10 backdrop-blur-md border-white/20 text-white placeholder:text-white/50 focus:border-purple-500 rounded-xl"
             />
 
             <Button
