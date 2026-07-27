@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Brain, Heart, Shield, Sparkles, Clock, Volume2, VolumeX, Briefcase, Sun, Smile, Wind, Users } from "lucide-react";
 import { Footer } from "@/components/footer";
 import { useRef, useState } from "react";
+import { PageTTSReader } from "@/components/page-tts-reader";
 
 export default function LandingPage() {
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -20,8 +21,8 @@ export default function LandingPage() {
     return (
         <div className="flex min-h-screen flex-col bg-[#07060b] text-white selection:bg-purple-500 selection:text-white">
             {/* Navigation */}
-            <header className="fixed top-0 z-50 w-full border-b border-white/10 bg-[#07060b]/85 backdrop-blur-md">
-                <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 max-w-6xl">
+            <header className="absolute top-0 left-0 right-0 z-50 w-full bg-transparent border-none shadow-none pointer-events-auto">
+                <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6 max-w-6xl">
                     <div className="flex items-center gap-2">
                         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-500/20 border border-purple-500/30 shadow-md shadow-purple-500/20">
                             <Brain className="h-5 w-5 text-purple-400" />
@@ -32,7 +33,7 @@ export default function LandingPage() {
                     </div>
                     <nav className="flex items-center gap-4">
                         <Link href="/login">
-                            <Button variant="ghost" className="text-sm font-medium text-zinc-300 hover:text-white hover:bg-white/5">
+                            <Button variant="ghost" className="text-sm font-medium text-zinc-300 hover:text-white hover:bg-white/10 border-none bg-transparent shadow-none">
                                 Log In
                             </Button>
                         </Link>
@@ -45,7 +46,7 @@ export default function LandingPage() {
                 </div>
             </header>
 
-            <main className="flex-1 pt-16">
+            <main className="flex-1">
                 {/* Hero Section */}
                 <section className="relative overflow-hidden py-20 md:py-32 lg:py-36">
                     {/* Background Elements */}
@@ -80,16 +81,10 @@ export default function LandingPage() {
                     <div className="container relative z-10 mx-auto px-4 text-center md:px-6 max-w-5xl">
                         <div className="mx-auto max-w-3xl space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out">
                             
-                            {/* Pill Badge */}
-                            <div className="inline-flex items-center rounded-full border border-purple-500/40 bg-purple-950/40 px-4 py-1.5 text-xs md:text-sm font-semibold text-purple-300 backdrop-blur-md shadow-sm">
-                                <Sparkles className="mr-2 h-4 w-4 text-purple-400" />
-                                <span>AI-Powered Mental Wellness</span>
-                            </div>
-
                             {/* Main Title */}
                             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl leading-tight">
                                 Your Personal AI <br />
-                                <span className="text-purple-400 drop-shadow-[0_0_25px_rgba(168,85,247,0.4)]">Voice Therapist</span>
+                                <span className="text-purple-400 drop-shadow-[0_0_25px_rgba(168,85,247,0.4)]">Voice Therapist & Life Coach</span>
                             </h1>
 
                             {/* Subtitle */}
@@ -141,7 +136,7 @@ export default function LandingPage() {
                     {/* 5 Companion Cards Grid */}
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 text-left">
                         
-                        {/* 1. Skylar */}
+                            {/* 1. Skylar */}
                         <div className="group relative rounded-3xl border border-purple-500/30 bg-[#0d0b18]/90 p-7 backdrop-blur-md transition-all duration-300 hover:border-purple-400 hover:shadow-2xl hover:shadow-purple-500/20 hover:-translate-y-1">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
@@ -158,8 +153,9 @@ export default function LandingPage() {
                             <p className="text-sm text-zinc-300 leading-relaxed mb-6">
                                 Warm, empathetic, and clinically grounded. Skylar is your safe harbor for deep emotional processing, healing, CBT techniques, and self-reflection.
                             </p>
-                            <div className="flex items-center text-xs font-semibold text-purple-300">
+                            <div className="flex items-center justify-between text-xs font-semibold text-purple-300">
                                 <span>Emotional Support & Guidance</span>
+                                <PageTTSReader textToRead="Voice Nova. Skylar. The Therapist. Warm, empathetic, and clinically grounded. Skylar is your safe harbor for deep emotional processing, healing, CBT techniques, and self-reflection. Emotional Support and Guidance." variant="compact" />
                             </div>
                         </div>
 
@@ -180,8 +176,9 @@ export default function LandingPage() {
                             <p className="text-sm text-zinc-300 leading-relaxed mb-6">
                                 Embodiment of wisdom, calm confidence, discipline, and high-character leadership. Your strategist for career, AI tech, mindfulness, and personal growth.
                             </p>
-                            <div className="flex items-center text-xs font-semibold text-teal-300">
+                            <div className="flex items-center justify-between text-xs font-semibold text-teal-300">
                                 <span>Wisdom, Strategy & Growth</span>
+                                <PageTTSReader textToRead="Voice Onyx. Chancellor. Strategic Mentor and Coach. Embodiment of wisdom, calm confidence, discipline, and high-character leadership. Your strategist for career, AI tech, mindfulness, and personal growth. Wisdom, Strategy and Growth." variant="compact" />
                             </div>
                         </div>
 
@@ -202,8 +199,9 @@ export default function LandingPage() {
                             <p className="text-sm text-zinc-300 leading-relaxed mb-6">
                                 Sunshine energy. Sydney is here to lift your mood, celebrate your wins (big or small), and remind you of the bright side with actionable hope.
                             </p>
-                            <div className="flex items-center text-xs font-semibold text-amber-300">
+                            <div className="flex items-center justify-between text-xs font-semibold text-amber-300">
                                 <span>Motivation & Positivity</span>
+                                <PageTTSReader textToRead="Voice Shimmer. Sydney. The Optimist. Sunshine energy. Sydney is here to lift your mood, celebrate your wins, big or small, and remind you of the bright side with actionable hope. Motivation and Positivity." variant="compact" />
                             </div>
                         </div>
 
@@ -224,8 +222,9 @@ export default function LandingPage() {
                             <p className="text-sm text-zinc-300 leading-relaxed mb-6">
                                 Smart, playful, and relentlessly honest. Hailey gives you the reality check you need with warmth, humor, and unwavering loyalty.
                             </p>
-                            <div className="flex items-center text-xs font-semibold text-violet-300">
+                            <div className="flex items-center justify-between text-xs font-semibold text-violet-300">
                                 <span>Direct & Honest Sounding Board</span>
+                                <PageTTSReader textToRead="Voice Fable. Hailey. Best Friend. Smart, playful, and relentlessly honest. Hailey gives you the reality check you need with warmth, humor, and unwavering loyalty. Direct and Honest Sounding Board." variant="compact" />
                             </div>
                         </div>
 
@@ -246,8 +245,9 @@ export default function LandingPage() {
                             <p className="text-sm text-zinc-300 leading-relaxed mb-6">
                                 Grounded and calm. Chris is the late-night conversation partner who helps you slow down, breathe, decompress, and practice mindfulness.
                             </p>
-                            <div className="flex items-center text-xs font-semibold text-emerald-300">
+                            <div className="flex items-center justify-between text-xs font-semibold text-emerald-300">
                                 <span>Mindfulness & Relaxation</span>
+                                <PageTTSReader textToRead="Voice Echo. Chris. The Chill One. Grounded and calm. Chris is the late-night conversation partner who helps you slow down, breathe, decompress, and practice mindfulness. Mindfulness and Relaxation." variant="compact" />
                             </div>
                         </div>
 
@@ -255,9 +255,12 @@ export default function LandingPage() {
                 </section>
 
                 {/* Why Choose iSkylar? Section */}
-                <section className="border-t border-white/10 bg-black/40 py-20 md:py-28">
+                <section className="border-t border-transparent bg-black/40 py-20 md:py-28">
                     <div className="container mx-auto px-4 text-center md:px-6 max-w-6xl">
-                        <h2 className="mb-14 text-3xl md:text-4xl font-extrabold text-white">Why Choose iSkylar?</h2>
+                        <div className="flex items-center justify-center gap-4 mb-14">
+                            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Why Choose iSkylar?</h2>
+                            <PageTTSReader textToRead="Why Choose iSkylar? 24/7 Availability: Support whenever you need it. Judgment Free: A safe space to be yourself. Instant Relief: Talk through anxiety in moments. 100% Confidential: Your secrets are safe with us." variant="compact" />
+                        </div>
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                             <div className="flex flex-col items-center space-y-3 rounded-2xl bg-[#0d0d12]/90 border border-white/10 p-7 shadow-lg">
                                 <Clock className="mb-2 h-8 w-8 text-purple-400" />

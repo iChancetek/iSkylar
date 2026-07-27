@@ -157,13 +157,16 @@ export const useFirebaseAuth = () => {
           fullName: user.displayName,
           profileImage: user.photoURL,
           createdAt: serverTimestamp(),
+          createdDateString: new Date().toISOString(),
           lastLogin: serverTimestamp(),
+          lastSignInTime: new Date().toISOString(),
           role: "user",
           language: "en", // Default language
         });
       } else {
         await updateDoc(userRef, {
           lastLogin: serverTimestamp(),
+          lastSignInTime: new Date().toISOString(),
         });
       }
       router.push("/dashboard");
@@ -219,7 +222,9 @@ export const useFirebaseAuth = () => {
         fullName: fullName,
         profileImage: null,
         createdAt: serverTimestamp(),
+        createdDateString: new Date().toISOString(),
         lastLogin: serverTimestamp(),
+        lastSignInTime: new Date().toISOString(),
         role: "user",
         language: "en", // Default language
       });
@@ -258,6 +263,7 @@ export const useFirebaseAuth = () => {
       const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, {
         lastLogin: serverTimestamp(),
+        lastSignInTime: new Date().toISOString(),
       });
       router.push("/dashboard");
     } catch (error: any) {
@@ -305,6 +311,13 @@ export const useFirebaseAuth = () => {
 
   const handleLogout = async () => {
     try {
+      if (auth.currentUser) {
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        await updateDoc(userRef, {
+          lastLogout: serverTimestamp(),
+          lastSignOutTime: new Date().toISOString(),
+        }).catch(console.error);
+      }
       await signOut(auth);
     } catch (error) {
       console.error("Error signing out:", error);

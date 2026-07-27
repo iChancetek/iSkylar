@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/lib/auth";
 import { saveSessionMemory, extractSessionSummary } from "@/lib/session-memory";
 import { usePersistedState } from "@/hooks/use-persisted-state";
+import { Timestamp } from "firebase/firestore";
 
 import { AgentSidebar, AGENT_ICONS } from "@/components/agent-sidebar";
 import { UserMenu } from "@/components/user-menu";
@@ -175,10 +176,21 @@ export default function VoiceInterface() {
         };
       });
 
+      const startTime = Timestamp.fromMillis(sessionStartTimeRef.current);
+      const endTime = Timestamp.now();
+      const userEmail = user.email || "";
+      const userName = userProfile?.fullName || user.displayName || user.email?.split('@')[0] || "User";
+
       try {
         await saveSessionMemory(user.uid, {
           ...summary,
           duration: durationSec,
+          startTime,
+          endTime,
+          userEmail,
+          userName,
+          companionId: currentAgent,
+          companionName: AGENTS[currentAgent]?.name || 'Skylar',
           transcript
         });
       } catch (error) {

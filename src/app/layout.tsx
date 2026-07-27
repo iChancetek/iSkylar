@@ -37,6 +37,8 @@ export const metadata: Metadata = {
   keywords: ['therapy', 'AI', 'mental health', 'voice', 'counseling', 'support'],
 };
 
+import { AIAssistantWidget } from '@/components/assistant-widget';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -57,7 +59,7 @@ export default function RootLayout({
                 {children}
               </AuthGuard>
               <Toaster />
-              {/* <InstallPWA /> Removed */}
+              <AIAssistantWidget />
             </UserPreferencesProvider>
           </AuthProvider>
         </ThemeProvider>

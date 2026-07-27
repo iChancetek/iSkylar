@@ -5,6 +5,12 @@ export interface SessionMemory {
     userId: string;
     sessionId: string;
     timestamp: Timestamp;
+    startTime?: Timestamp;
+    endTime?: Timestamp;
+    userEmail?: string;
+    userName?: string;
+    companionId?: string;
+    companionName?: string;
     conversationalThemes: string[];
     emotionalPatterns: string[];
     duration: number;
@@ -19,6 +25,12 @@ export interface SessionMemory {
 export async function saveSessionMemory(
     userId: string,
     sessionData: {
+        startTime?: Timestamp;
+        endTime?: Timestamp;
+        userEmail?: string;
+        userName?: string;
+        companionId?: string;
+        companionName?: string;
         conversationalThemes: string[];
         emotionalPatterns: string[];
         duration: number;
@@ -29,6 +41,12 @@ export async function saveSessionMemory(
     try {
         const sessionMemory: Omit<SessionMemory, 'sessionId'> = {
             userId,
+            userEmail: sessionData.userEmail || '',
+            userName: sessionData.userName || '',
+            companionId: sessionData.companionId || 'skylar',
+            companionName: sessionData.companionName || 'Skylar',
+            startTime: sessionData.startTime || Timestamp.now(),
+            endTime: sessionData.endTime || Timestamp.now(),
             timestamp: Timestamp.now(),
             conversationalThemes: sessionData.conversationalThemes,
             emotionalPatterns: sessionData.emotionalPatterns,
